@@ -18,6 +18,7 @@ import AdminHome from './admin/pages/AdminHome'
 import AdminUsers from './admin/pages/AdminUsers'
 import AdminEvents from './admin/pages/AdminEvents'
 import AddShow from './user/pages/ListYourShow/AddShow'
+import BookingDetails from './user/pages/ListYourShow/BookingDetails'
 
 function App() {
 
@@ -48,6 +49,7 @@ function App() {
         <Route path='/:id/event-view' element={<EventView />} />
         {/* List your Show by users */}
         <Route path='/your-shows/add-shows' element={<AddShow/>} />
+        <Route path='your-shows/booking-details' element={<BookingDetails/>} />
 
 
 

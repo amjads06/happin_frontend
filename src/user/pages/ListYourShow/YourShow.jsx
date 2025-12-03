@@ -14,11 +14,9 @@ function YourShow() {
 
       <div className="min-h-screen w-full flex justify-center items-center px-25 bg-cover bg-center " style={{ backgroundImage: `url(${img1})` }}>
         <div className=" w-full h-auto flex justify-center flex-col gap-20 items-center bg-white/70 p-10 md:mt-15 rounded-[30px] backdrop-blur-sm">
-
           <h2 className="text-3xl font-bold text-gray-800 mb-6">
             Dashboard
           </h2>
-
           {/* Stats Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full max-w-6xl">
 
@@ -56,7 +54,6 @@ function YourShow() {
           </div>
 
         </div>
-
       </div>
 
 

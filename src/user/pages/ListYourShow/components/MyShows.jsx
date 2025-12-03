@@ -36,7 +36,7 @@ function MyShows() {
 
                 {!selectedShow &&
                     <>
-                        <h2 className="text-3xl font-bold text-gray-900">My Shows</h2>
+                        <h2 className="text-3xl font-bold text-gray-900">Manage Shows</h2>
                         <p className="text-gray-600 mt-2">View and manage your events.</p>
                         <div className="mt-8 grid gap-4">
                             {shows.map((show) => (
