@@ -19,6 +19,7 @@ import AdminUsers from './admin/pages/AdminUsers'
 import AdminEvents from './admin/pages/AdminEvents'
 import AddShow from './user/pages/ListYourShow/AddShow'
 import BookingDetails from './user/pages/ListYourShow/BookingDetails'
+import { ToastContainer } from 'react-toastify'
 
 function App() {
 
@@ -35,7 +36,7 @@ function App() {
         {/* Common */}
         <Route path='/' element={<LandingPage />} />
         <Route path='/login' element={<Auth />} />
-        <Route path='/register' element={<Auth register/>} />
+        <Route path='/register' element={<Auth register />} />
         <Route path='*' element={<Pnf />} />
 
         {/* Users */}
@@ -48,8 +49,8 @@ function App() {
         <Route path='/profile' element={< Profile />} />
         <Route path='/:id/event-view' element={<EventView />} />
         {/* List your Show by users */}
-        <Route path='/your-shows/add-shows' element={<AddShow/>} />
-        <Route path='your-shows/booking-details' element={<BookingDetails/>} />
+        <Route path='/your-shows/add-shows' element={<AddShow />} />
+        <Route path='your-shows/booking-details' element={<BookingDetails />} />
 
 
 
@@ -57,9 +58,13 @@ function App() {
         <Route path='/admin-home' element={<AdminHome />} />
         <Route path='/admin-users' element={<AdminUsers />} />
         <Route path='/admin-events' element={<AdminEvents />} />
-
-
       </Routes>
+      <ToastContainer
+        position="top-center"
+        autoClose={2500}
+        theme="colored"
+
+      />
     </>
   )
 }
