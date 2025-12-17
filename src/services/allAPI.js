@@ -18,3 +18,4 @@ export const loginAPI = async (reqBody) => {
 export const updateUserDetailsAPI = async (reqBody, reqHeader) => {
   return await commonAPI("PUT",`${serverURL}/update-user-profile`,reqBody,reqHeader);
 };
+

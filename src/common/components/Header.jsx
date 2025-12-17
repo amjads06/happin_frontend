@@ -7,6 +7,7 @@ import { useGSAP } from "@gsap/react";
 import { AiOutlineClose } from "react-icons/ai";
 import { LuLogOut } from "react-icons/lu";
 import serverURL from "../../services/serverURL";
+import { useUserStore } from "../../store/userStore";
 
 export default function Header({ searchBar }) {
     const modalSlide = useRef(null);
@@ -16,6 +17,9 @@ export default function Header({ searchBar }) {
     const [profile, setProfile] = useState("")
     const [token, setToken] = useState("")
     const navigate = useNavigate()
+
+    const userDetails=useUserStore((state)=>state.userDetails)
+    // console.log(userDetails);
 
     const handleLogout = () => {
         sessionStorage.setItem("token", "")
@@ -32,7 +36,7 @@ export default function Header({ searchBar }) {
             setProfile(userData.profile)
             setToken(sessionStorage.getItem("token"))
         }
-    }, [])
+    }, [userDetails])
 
 
     // Main GSAP animation

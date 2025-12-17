@@ -4,21 +4,22 @@ import Footer from "../../common/components/Footer";
 import serverURL from "../../services/serverURL";
 import { updateUserDetailsAPI } from "../../services/allAPI";
 import { toast } from "react-toastify";
+import { useUserStore } from "../../store/userStore";
 
 export default function Profile() {
-  const [editMode, setEditMode] = useState(false);
+  const editMode = true;
 
   const [token, setToken] = useState("")
-  console.log(token);
-  
+  // console.log(token);
+
   const [userDetails, setUserDetails] = useState({
     username: "", password: "", conformPassword: "", bio: "", role: "", profile: "", phone: ""
   })
   const [preview, setPreview] = useState("")
   const [existingProfile, setExistingProfile] = useState("")
-
-  console.log(userDetails)
-  console.log(existingProfile);
+  const updateUser = useUserStore((state) => state.updateUser)
+  // console.log(userDetails)
+  // console.log(existingProfile);
 
 
   const handleUpdate = async () => {
@@ -27,12 +28,12 @@ export default function Profile() {
       toast.info("Fill all the fields")
     } else {
       if (conformPassword != password) {
-        toast.warning("Password is wrong")
+        toast.warning("Password is not matching")
       } else {
 
         // reqHeader
         const reqHeader = {
-          "Authorization":`Bearer ${token}`
+          "Authorization": `Bearer ${token}`
         }
 
         const reqBody = new FormData()
@@ -41,9 +42,11 @@ export default function Profile() {
         }
         try {
           const result = await updateUserDetailsAPI(reqBody, reqHeader)
-          console.log(result);
+          // console.log(result);
           toast.success("Profile updated successfully")
           sessionStorage.setItem("existingUser", JSON.stringify(result.data))
+          updateUser(result.data)
+
         } catch (err) {
           console.log(err);
           toast.error("Something went wrong")
@@ -58,11 +61,17 @@ export default function Profile() {
     setPreview(url)
   }
 
+  const handleReset = () => {
+    const user = JSON.parse(sessionStorage.getItem("existingUser"))
+    setUserDetails({ username: user.username, password: user.password, phone: user.phone, conformPassword: user.password, bio: user.bio, role: user.role })
+    setPreview("")
+  }
+
   useEffect(() => {
     if (sessionStorage.getItem("token")) {
       setToken(sessionStorage.getItem("token"))
       const user = JSON.parse(sessionStorage.getItem("existingUser"))
-      setUserDetails({ username: user.username, password: user.password, phone: user.phone, conformPassword: user.password, bio: user.bio ,role:user.role})
+      setUserDetails({ username: user.username, password: user.password, phone: user.phone, conformPassword: user.password, bio: user.bio, role: user.role })
       setExistingProfile(user.profile)
     }
   }, [])
@@ -171,30 +180,23 @@ export default function Profile() {
           </div>
           {/* Buttons */}
           <div className="mt-8 flex gap-4">
-            {!editMode ? (
-              <button
-                onClick={() => setEditMode(true)}
-                className="px-6 py-3 bg-purple-600 hover:bg-purple-700 rounded-xl"
-              >
-                Edit Info
-              </button>
-            ) : (
+            {editMode &&
               <>
                 <button
-                  onClick={() => setEditMode(false)}
+                  onClick={handleReset}
                   className="px-6 py-3 bg-white/10 hover:bg-white/20 rounded-xl"
                 >
-                  Cancel
+                  Reset
                 </button>
                 <button
-                type="button"
+                  type="button"
                   onClick={handleUpdate}
                   className="px-6 py-3 bg-purple-600 hover:bg-purple-700 rounded-xl"
                 >
                   Save Changes
                 </button>
               </>
-            )}
+            }
           </div>
         </div>
 

@@ -101,22 +101,6 @@ function LandingPage() {
                     }
                 })
             })
-
-            // TECNA-style elastic scroll effect
-            gsap.to(".bars", {
-                y: -620,        // slight upward movement
-                scaleY: 40.08,   // subtle stretch
-                ease: "none",
-                scrollTrigger: {
-                    trigger: ".bars",
-                    start: "top top",
-                    end: "top 10%",
-                    scrub: true,
-                }
-            });
-
-
-
         }, sec3)
         return () => {
             ctx.revert();

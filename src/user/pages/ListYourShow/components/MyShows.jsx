@@ -8,22 +8,28 @@ function MyShows() {
     // Example show data — replace later with API data
     const shows = [
         {
-            id: 1,
-            img: img1,
+            poster: img1,
             title: "Music Night 2025",
             date: "20 Feb 2025",
+            time:"11AM",
+            duration:"2",
             location: "Kochi",
             status: "Pending",
-            bookings: 34,
+            capacity: 34,
+            description:"loremasfsdmfnweiuf afsoihwoq aoisjoiadns wdoqo ad",
+            venueDetails:"Bolgatti Palace and Island Resort, Kochi"
         },
-        {
-            id: 2,
-            img: img2,
+        {   
+            poster: img2,
             title: "Comedy Night Live",
             date: "15 Mar 2025",
+            time:"10 PM",
+            duration:"2",
             location: "Calicut",
             status: "Approved",
-            bookings: 89,
+            capacity: 89,
+            description:"loremasfsdmfnweiuf afsoihwoq aoisjoiadns wdoqo ad",
+            venueDetails:"Bolgatti Palace and Island Resort, Kochi"
         },
     ];
 
@@ -44,7 +50,7 @@ function MyShows() {
 
 
                                     <div className="flex gap-5 justify-center items-center">
-                                        <img src={show.img} className="w-45 h-30 object-cover" alt="" />
+                                        <img src={show.poster} className="w-45 h-30 object-cover" alt="" />
                                         <div>
                                             <h3 className="text-xl font-semibold">{show.title}</h3>
                                             <p className="text-gray-600 text-sm">
@@ -99,8 +105,8 @@ function MyShows() {
                         {/* Title */}
                         <h2 className="text-3xl font-bold text-gray-900">{selectedShow.title}</h2>
                         <p className="text-gray-600 mt-2">Detailed information about your show.</p>
+                        <img src={selectedShow.poster} className="w-100 h-60 my-5 object-cover" alt="event img" />
 
-                        <img src={selectedShow.img} className="w-100 h-60 my-5 object-cover" alt="event img" />
 
                         {/* Details Grid */}
                         <div className="grid md:grid-cols-3 gap-6 mt-8">
@@ -140,16 +146,24 @@ function MyShows() {
                             {/* Seat Limit */}
                             <div className="p-6 bg-white border shadow rounded-xl">
                                 <h3 className="text-xl font-bold text-purple-600">
-                                    {selectedShow.seats || "Unlimited"}
+                                    {selectedShow.capacity || "Unlimited"}
                                 </h3>
                                 <p className="text-gray-600">Seat Limit</p>
                             </div>
+
                             {/* Price */}
                             <div className="p-6 bg-white border shadow rounded-xl">
                                 <h3 className="text-xl font-bold text-purple-600">
                                     {selectedShow.seats || "Free"}
                                 </h3>
                                 <p className="text-gray-600">Price</p>
+                            </div>
+                            
+                            <div className="p-6 bg-white border shadow rounded-xl">
+                                <h3 className="text-xl font-bold text-purple-600">
+                                    {selectedShow.duration ||"Duration not provided"}
+                                </h3>
+                                <p className="text-gray-600">Duration</p>
                             </div>
 
                         </div>
@@ -165,7 +179,7 @@ function MyShows() {
                         <div className="mt-8 bg-white border shadow rounded-xl p-6">
                             <h3 className="text-xl font-bold text-gray-800">Venue details</h3>
                             <p className="text-gray-600 mt-2">
-                                {selectedShow.description || "No description provided."}
+                                {selectedShow.venueDetails || "No details provided."}
                             </p>
                         </div>
 
