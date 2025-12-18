@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
     FaCalendarAlt,
     FaClock,
@@ -9,17 +9,32 @@ import {
 } from "react-icons/fa";
 import Header from "../../common/components/Header";
 import Footer from "../../common/components/Footer";
+import { useParams } from "react-router-dom";
+import { getAEventAPI } from "../../services/allAPI";
+import noimg from "../../assets/photos/Gemini_Generated_Image_v6b8a2v6b8a2v6b8.png"
+import serverURL from "../../services/serverURL";
+import { MdConnectWithoutContact } from "react-icons/md";
+import { IoIosCall } from "react-icons/io";
+import { BiCategoryAlt } from "react-icons/bi";
 
 function EventView() {
-    // useEffect(() => {
-    //     // Disable smooth scroll
-    //     lenis.stop();
+    
+    const {id}=useParams()
+    // console.log(id);
 
-    //     return () => {
-    //         // Re-enable smooth scroll when leaving page
-    //         lenis.start();
-    //     };
-    // }, []);
+    const [eventData,setEventData]=useState({})
+
+    const getEvent=async()=>{
+        const result=await getAEventAPI(id)
+        // console.log(result.data);
+        setEventData(result.data)
+        
+    }
+    
+    useEffect(()=>{
+        getEvent()
+    },[])
+
     return (
         <>
             <Header />
@@ -27,7 +42,7 @@ function EventView() {
             <div className="min-h-screen p-6 md:p-12 bg-white md:pt-30">
 
                 {/* Event Title */}
-                <h1 className="text-3xl md:text-4xl font-bold mb-6">Karthik Live - Kochi</h1>
+                <h1 className="text-3xl md:text-4xl font-bold mb-6">{eventData.title} </h1>
 
                 <div className="flex flex-col lg:flex-row gap-10">
 
@@ -36,7 +51,7 @@ function EventView() {
                         {/* Banner Image */}
                         <div className="rounded-2xl overflow-hidden shadow">
                             <img
-                                src="https://assets-in.bmscdn.com/nmcms/desktop/media-desktop-karthik-live-kochi-2025-10-9-t-12-41-40.jpg"
+                                src={eventData?.poster==""?noimg:`${serverURL}/imageUploads/${eventData.poster}`}
                                 alt="Event Banner"
                                 className="w-full h-[380px] object-cover object-top"
                             />
@@ -44,8 +59,8 @@ function EventView() {
 
                         {/* Tags */}
                         <div className="flex gap-3 mt-4">
-                            <span className="px-3 py-1 bg-gray-200 rounded-lg text-sm">Concerts</span>
-                            <span className="px-3 py-1 bg-gray-200 rounded-lg text-sm">Music Shows</span>
+                            <span className="px-3 py-1 bg-gray-200 rounded-lg text-sm">Category</span>
+                            <span className="px-3 py-1 bg-gray-200 rounded-lg text-sm">{eventData.category}</span>
                         </div>
 
                      
@@ -53,11 +68,10 @@ function EventView() {
                         {/* ABOUT SECTION */}
                         <h2 className="mt-10 text-2xl font-bold">About The Event</h2>
                         <p className="mt-4 text-gray-700 leading-relaxed">
-                            Karthik is one of India’s most loved and celebrated voices — an artist whose
-                            music has touched millions across generations. Hailing from Chennai and trained
-                            in Carnatic & Hindustani music, his journey has been extraordinary...
+                            {eventData.description}
                         </p>
-                        <button className="mt-2 text-pink-600 font-medium">Read More</button>
+                        <div><h3 className="mt-2 text-pink-600 font-medium">Event Uploaded by : {eventData.uploadedBy}</h3></div>
+                        {/* <button >Read More</button> */}
                     </div>
 
                     {/* RIGHT SECTION - INFO CARD */}
@@ -65,40 +79,41 @@ function EventView() {
 
                         <div className="flex items-center gap-3 mb-4">
                             <FaCalendarAlt className="text-gray-700" />
-                            <span>Fri 19 Dec 2025</span>
+                            <span>{new Date(eventData.date).toLocaleDateString("en-GB", {
+                                                day: "2-digit",
+                                                month: "long",
+                                                year: "numeric",
+                                            })}</span>
                         </div>
 
                         <div className="flex items-center gap-3 mb-4">
                             <FaClock className="text-gray-700" />
-                            <span>7:30 PM</span>
+                            <span>{eventData.time}</span>
                         </div>
+
 
                         <div className="flex items-center gap-3 mb-4">
                             <FaClock className="text-gray-700" />
-                            <span>2 Hours</span>
+                            <span>{eventData.duration} Hours</span>
                         </div>
 
+                        
                         <div className="flex items-center gap-3 mb-4">
-                            <FaUsers className="text-gray-700" />
-                            <span>Age Limit - 5yrs+</span>
-                        </div>
-
-                        <div className="flex items-center gap-3 mb-4">
-                            <FaLanguage className="text-gray-700" />
-                            <span>Multi Language</span>
-                        </div>
-
-                        <div className="flex items-center gap-3 mb-4">
-                            <FaMusic className="text-gray-700" />
-                            <span>Fusion, Indian Pop, Regional</span>
+                            <BiCategoryAlt className="text-gray-700" />
+                            <span>{eventData.category}</span>
                         </div>
 
                         <div className="flex items-start gap-3 mb-6">
                             <FaMapMarkerAlt className="text-gray-700 mt-1" />
-                            <span>Bolgatti Palace and Island Resort, Kochi</span>
+                            <span>{eventData.venueDetails}</span>
                         </div>
 
-                        <div className="text-xl font-bold mb-1">₹999 onwards</div>
+                        <div className="flex items-center gap-3 mb-4">
+                            <IoIosCall className="text-gray-700" />
+                            <span>{eventData.contact}</span>
+                        </div>
+
+                        <div className="text-xl font-bold mb-1">{eventData.price==""?"FREE":`₹${eventData.price} onwards`}</div>
 
                         <button className="w-full bg-pink-600 text-white py-3 mt-5 rounded-xl hover:bg-pink-500 transition">
                             Book Now

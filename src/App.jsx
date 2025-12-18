@@ -48,10 +48,10 @@ function App() {
         <Route path='/your-shows' element={<YourShow />} />
         <Route path='/my-bookings' element={< UserBookings />} />
         <Route path='/profile' element={< Profile />} />
-        <Route path='/:id/event-view' element={<EventView />} />
+        <Route path='/view-event/:id' element={<EventView />} />
         {/* List your Show by users */}
         <Route path='/your-shows/add-shows' element={<AddShow />} />
-        <Route path='/your-shows/show-details' element={<ShowDetails />} />
+        <Route path='/your-shows/show-details/:id' element={<ShowDetails />} />
         <Route path='your-shows/booking-details' element={<BookingDetails />} />
 
 

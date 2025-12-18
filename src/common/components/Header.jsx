@@ -8,6 +8,7 @@ import { AiOutlineClose } from "react-icons/ai";
 import { LuLogOut } from "react-icons/lu";
 import serverURL from "../../services/serverURL";
 import { useUserStore } from "../../store/userStore";
+import { useEventStore } from "../../store/eventStore";
 
 export default function Header({ searchBar }) {
     const modalSlide = useRef(null);
@@ -17,8 +18,10 @@ export default function Header({ searchBar }) {
     const [profile, setProfile] = useState("")
     const [token, setToken] = useState("")
     const navigate = useNavigate()
+    const {setSearchKey } = useEventStore();
+    
 
-    const userDetails=useUserStore((state)=>state.userDetails)
+    const userDetails = useUserStore((state) => state.userDetails)
     // console.log(userDetails);
 
     const handleLogout = () => {
@@ -107,6 +110,7 @@ export default function Header({ searchBar }) {
                     </nav>
                     {searchBar && (
                         <input
+                            onChange={(e)=>setSearchKey(e.target.value)}
                             type="text"
                             className="hidden md:flex bg-white w-89 h-10 pl-5 border-2 border-gray-500 rounded-2xl"
                             placeholder="Search Events"
@@ -115,11 +119,11 @@ export default function Header({ searchBar }) {
                 </div>
 
                 <div className=" bg-white text-black px-5 md:mr-20 md:px-5 md:py-1 flex justify-center items-center rounded-[40px] md:gap-6 gap-2 shadow-xl ">
-                    {!token ? <Link to={"/login"}><h1 className="hidden md:block text-l font-bold hover:text-fuchsia-700 cursor-pointer ">Log In</h1></Link> 
-                    :
+                    {!token ? <Link to={"/login"}><h1 className="hidden md:block text-l font-bold hover:text-fuchsia-700 cursor-pointer ">Log In</h1></Link>
+                        :
                         <Link to={"/profile"}>
                             <div className="flex justify-center items-center ">
-                                <img style={{width:"65px",height:"65px"}} src={profile==""?"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSnFRPx77U9mERU_T1zyHcz9BOxbDQrL4Dvtg&s":`${serverURL}/imageUploads/${profile}` }alt="profile-img" className="rounded-[50%] md:ml-[-13px] object-cover" />
+                                <img style={{ width: "65px", height: "65px" }} src={profile == "" ? "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSnFRPx77U9mERU_T1zyHcz9BOxbDQrL4Dvtg&s" : `${serverURL}/imageUploads/${profile}`} alt="profile-img" className="rounded-[50%] md:ml-[-13px] object-cover" />
                                 <h1 className="hidden md:ml-2 md:block text-lg font-semi-bold hover:text-fuchsia-700 cursor-pointer ">{userName}</h1>
                             </div>
                         </Link>
@@ -145,14 +149,14 @@ export default function Header({ searchBar }) {
                             <div className="flex flex-col cursor-pointer text-purple-900 justify-center items-center md:gap-0 gap-10">
                                 {!token && <Link to={"/login"}><h1 className=" hover:text-fuchsia-700 md:mt-5">Login</h1></Link>}
                                 <div className="h-px w-75 bg-gray-200 md:mt-3"></div>
-                                <Link to={"/profile "}><h1 className=" hover:text-fuchsia-700 md:mt-5">Profile</h1></Link>
+                               {token&&<><Link to={"/profile "}><h1 className=" hover:text-fuchsia-700 md:mt-5">Profile</h1></Link>
+                                <div className="h-px w-75 bg-gray-200 md:mt-3"></div></> }
+                             <Link to={"/contact"}> <h1 className=" hover:text-fuchsia-700 md:mt-5">Contact Us</h1></Link>
                                 <div className="h-px w-75 bg-gray-200 md:mt-3"></div>
-                                <Link to={"/contact"}> <h1 className=" hover:text-fuchsia-700 md:mt-5">Contact Us</h1></Link>
-                                <div className="h-px w-75 bg-gray-200 md:mt-3"></div>
-                                <Link to={"/list-your-show"}> <h1 className=" hover:text-fuchsia-700 md:mt-5">ListYourShow</h1></Link>
-                                <div className="h-px w-75 bg-gray-200 md:mt-3"></div>
-                                <Link to={"/my-bookings"}> <h1 className=" hover:text-fuchsia-700 md:mt-5">Your Bookings</h1></Link>
-                                <div className="h-px w-75 bg-gray-200 md:mt-3"></div>
+                               {token&&<><Link to={"/list-your-show"}> <h1 className=" hover:text-fuchsia-700 md:mt-5">ListYourShow</h1></Link>
+                                <div className="h-px w-75 bg-gray-200 md:mt-3"></div></> }
+                             {token&&<><Link to={"/my-bookings"}> <h1 className=" hover:text-fuchsia-700 md:mt-5">Your Bookings</h1></Link>
+                                <div className="h-px w-75 bg-gray-200 md:mt-3"></div></> }
                                 {token && <div onClick={handleLogout} className="flex p-2 md:absolute md:bottom-10 justify-center hover:text-fuchsia-700"><LuLogOut className="mt-1.5" /><h1>Logout</h1></div>}
                             </div>
 

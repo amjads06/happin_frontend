@@ -90,7 +90,7 @@ function BookingDetails() {
 
     return (
         <>
-            <Header2 />
+            <Header2 active={"booking-details"}/>
 
             {/* LIST OF SHOWS */}
             {!viewBookingStatus && (

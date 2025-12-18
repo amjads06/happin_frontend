@@ -11,11 +11,70 @@ export const loginAPI = async (reqBody) => {
   return await commonAPI("POST", `${serverURL}/login`, reqBody);
 };
 
-
-// ------------user APIs----------------
+// ---------------------user APIs--------------------------------
 
 // update profile
 export const updateUserDetailsAPI = async (reqBody, reqHeader) => {
-  return await commonAPI("PUT",`${serverURL}/update-user-profile`,reqBody,reqHeader);
+  return await commonAPI(
+    "PUT",
+    `${serverURL}/update-user-profile`,
+    reqBody,
+    reqHeader
+  );
 };
 
+// get all events
+export const getAllEventsAPI = async (searchKey) => {
+  return await commonAPI("GET", `${serverURL}/all-events?search=${searchKey}`);
+};
+
+// get all Sports events
+export const getAllSportsAPI = async (searchKey) => {
+  return await commonAPI("GET", `${serverURL}/all-sports?search=${searchKey}`);
+};
+
+// get a event API
+export const getAEventAPI = async (id) => {
+  return await commonAPI("GET", `${serverURL}/view-event/${id}`, "");
+};
+
+// BookEvent
+
+
+// -----------------users event managing section APIs-------------------------------
+
+// Add Event
+export const addEventAPI = async (reqBody, reqHeader) => {
+  return await commonAPI(
+    "POST",
+    `${serverURL}/add-event`,
+    reqBody,
+    reqHeader
+  );
+};
+
+// get all user uploded events
+export const getAllUploadedEventsAPI = async (reqHeader) => {
+  return await commonAPI("GET", `${serverURL}/uploaded-events`, "", reqHeader);
+};
+
+// view a user uploded event
+export const getAUploadedEventAPI = async (id,reqHeader) => {
+  return await commonAPI("GET", `${serverURL}/uploaded-event/${id}`, "", reqHeader);
+};
+
+
+// update event
+export const updateEventAPI = async (id,reqBody, reqHeader) => {
+  return await commonAPI(
+    "PUT",  
+    `${serverURL}/update-event/${id}`,
+    reqBody,
+    reqHeader
+  );
+};
+
+// delete a event API
+export const deleteAEventAPI = async (id) => {
+  return await commonAPI("DELETE", `${serverURL}/delete-event/${id}`, "");
+};

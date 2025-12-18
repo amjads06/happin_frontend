@@ -1,44 +1,15 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Header from "../../common/components/Header";
 import Footer from "../../common/components/Footer";
 import { Link } from "react-router-dom";
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
+import { getAllEventsAPI } from "../../services/allAPI";
+import serverURL from "../../services/serverURL";
+import noImage from "../../assets/photos/Gemini_Generated_Image_v6b8a2v6b8a2v6b8.png"
+import { useEventStore } from "../../store/eventStore";
 
-const categories = ["Music Shows", "Comedy Shows", "Kids", "Workshops"];
-const locations = ["Kochi", "kozhikode", "Trivandrum", "Kottayam"];
-const priceRanges = ["Free", "Under ₹500", "₹500 - ₹1000", "Above ₹1000"];
-
-const events = [
-    {
-        title: "Karthik Live - Kochi",
-        date: "Fri, 19 Dec",
-        location: "Bolgaty Palace",
-        price: "₹999",
-        img: "https://assets-in.bmscdn.com/nmcms/desktop/media-desktop-karthik-live-kochi-2025-10-9-t-12-41-40.jpg",
-    },
-    
-    {
-        title: "Pradeep Kumar Live",
-        date: "Sat, 6 Dec",
-        location: "Kinfra International",
-        price: "₹499",
-        img: "https://assets-in.bmscdn.com/nmcms/events/banner/desktop/media-desktop-journey-to-nebulakal-pradeep-kumar-live-in-kochi-0-2025-11-5-t-14-20-5.jpg",
-    }, {
-        title: "Karthik Live - Kochi",
-        date: "Fri, 19 Dec",
-        location: "Bolgaty Palace",
-        price: "₹999",
-        img: "https://assets-in.bmscdn.com/nmcms/desktop/media-desktop-karthik-live-kochi-2025-10-9-t-12-41-40.jpg",
-    },
-    
-    {
-        title: "Manjil Virinja Sangeetham",
-        date: "Sat, 22 Nov",
-        location: "JT Performing Arts",
-        price: "₹409",
-        img: "https://assets-in.bmscdn.com/nmcms/events/banner/desktop/media-desktop-manjil-virinja-sangeetham-0-2025-10-30-t-9-26-39.jpg",
-    },
-];
+// const locations = ["Kochi", "kozhikode", "Trivandrum", "Kottayam"];
+const priceRanges = ["Free", "paid"];
 
 
 
@@ -46,8 +17,78 @@ function Event() {
 
     const [categorieButton, setCategorieButton] = useState(false)
     const [locationButton, setLocationButton] = useState(false)
-    const [priceButton, setPriceButton] = useState(false)
+    const [categories, setAllCategory] = useState([])
+    const [selectedCategory, setSelectedCategory] = useState("");
 
+    const [selectedLocation, setSelectedLocation] = useState("");
+    const [locations, setLocations] = useState([])
+
+    const [selectedPrice, setSelectedPrice] = useState("")
+
+
+
+    const [priceButton, setPriceButton] = useState(false)
+    const [events, setEvents] = useState([])
+    const [tempEvents, setTempEvents] = useState([])
+    const { searchKey } = useEventStore();
+    // console.log(searchKey);
+
+
+    const getAllEvents = async () => {
+        try {
+            const result = await getAllEventsAPI(searchKey)
+            // console.log(result);
+            setEvents(result.data)
+            setTempEvents(result.data)
+            const tempCategory = result.data.map(item => item.category)
+            setAllCategory([...new Set(tempCategory)])
+            const tempLocations = result.data.map(item => item.location)
+            setLocations([...new Set(tempLocations)])
+
+        } catch (err) {
+            console.log(err);
+        }
+    }
+
+    const handleCategory = (category) => {
+        if (category == "") {
+            setEvents(tempEvents)
+            setSelectedCategory("");
+        } else {
+            setEvents(tempEvents?.filter(item => item.category.toLowerCase() == category.toLowerCase()))
+            setSelectedCategory(category);
+        }
+    }
+
+    const handleLocation = (location) => {
+        if (location == "") {
+            setEvents(tempEvents)
+            setSelectedLocation("");
+        } else {
+            setEvents(tempEvents?.filter(item => item.location.toLowerCase() == location.toLowerCase()))
+            setSelectedLocation(location);
+        }
+    }
+
+
+    const handlePrice = (price) => {
+        if (price == "Free") {
+            setEvents(tempEvents?.filter(item => item.price == ""))
+            setSelectedPrice(price)
+        } else if (price == "") {
+            setEvents(tempEvents)
+            setSelectedPrice("")
+        } else {
+            setEvents(tempEvents?.filter(item => item.price != ""))
+            setSelectedPrice(price)
+        }
+    }
+
+
+
+    useEffect(() => {
+        getAllEvents();
+    }, [searchKey]);
     return (
 
         <>
@@ -64,12 +105,12 @@ function Event() {
                                 {categorieButton ? <button className="px-2"><IoIosArrowUp /></button> :
                                     <button className="px-2"><IoIosArrowDown /></button>}
                                 <h1 className="text-lg font-medium text-gray-800"> Categories</h1>
-                                {categorieButton && <button className="text-sm ml-auto mr-2 hover:text-red-600"> Clear</button>}
+                                {categorieButton && <button onClick={() => handleCategory("")} className="text-sm ml-auto mr-2 hover:text-red-600"> Clear</button>}
                             </div>
                             {categorieButton && <div className="flex flex-wrap gap-5 md:py-4 md:px-2 ">
-                                {categories?.map((items, index) => (
-                                    <div key={index} className="cursor-pointer p-2 justify-center items-center rounded border border-gray-300 text-gray-900 hover:bg-fuchsia-950 hover:text-white transition-color duration-300 ease-out">
-                                        <h3>{items}</h3>
+                                {categories?.map((item, index) => (
+                                    <div onClick={() => handleCategory(item)} key={index} className={selectedCategory == item ? "cursor-pointer p-2 justify-center items-center rounded border border-gray-300 bg-fuchsia-950 text-white" : "cursor-pointer p-2 justify-center items-center rounded border border-gray-300 text-gray-900 hover:bg-fuchsia-950 hover:text-white transition-color duration-300 ease-out"}>
+                                        <h3 >{item}</h3>
                                     </div>
                                 ))}
                             </div>}
@@ -84,12 +125,12 @@ function Event() {
                                 {locationButton ? <button className="px-2"><IoIosArrowUp /></button> :
                                     <button className="px-2"><IoIosArrowDown /></button>}
                                 <h1 className="text-lg font-medium text-gray-800"> Location</h1>
-                                {locationButton && <button className="text-sm ml-auto mr-2 hover:text-red-600"> Clear</button>}
+                                {locationButton && <button onClick={() => handleLocation("")} className="text-sm ml-auto mr-2 hover:text-red-600"> Clear</button>}
                             </div>
                             {locationButton && <div className="flex flex-wrap gap-5 md:py-4 md:px-2 ">
-                                {locations?.map((items, i) => (
-                                    <div key={i} className="cursor-pointer p-2 justify-center items-center rounded border border-gray-300 text-gray-900 hover:bg-fuchsia-950 hover:text-white transition-color duration-300 ease-out">
-                                        <h3>{items}</h3>
+                                {locations?.map((item, index) => (
+                                    <div onClick={() => handleLocation(item)} key={index} className={selectedLocation == item ? "cursor-pointer p-2 justify-center items-center rounded border border-gray-300 bg-fuchsia-950 text-white" : "cursor-pointer p-2 justify-center items-center rounded border border-gray-300 text-gray-900 hover:bg-fuchsia-950 hover:text-white transition-color duration-300 ease-out"}>
+                                        <h3>{item}</h3>
                                     </div>
                                 ))}
                             </div>}
@@ -99,17 +140,17 @@ function Event() {
                     {/* Price */}
                     <div className="w-full flex flex-col gap-1 md:pt-8 ">
                         <div className="h-auto flex-col bg-white rounded p-2">
-                            <div onClick={() => setPriceButton(!priceButton)} className="flex cursor-pointer">
+                            <div className="flex cursor-pointer">
 
                                 {priceButton ? <button className="px-2"><IoIosArrowUp /></button> :
                                     <button className="px-2"><IoIosArrowDown /></button>}
                                 <h1 className="text-lg font-medium text-gray-800"> Price</h1>
-                                {priceButton && <button className="text-sm ml-auto mr-2 hover:text-red-600"> Clear</button>}
+                                {priceButton && <button onClick={() => setPriceButton(!priceButton)} className="text-sm ml-auto mr-2 hover:text-red-600"> Clear</button>}
                             </div>
-                            {priceButton&&<div className="flex flex-wrap gap-5 md:py-4 md:px-2 ">
+                            {priceButton && <div className="flex flex-wrap gap-5 md:py-4 md:px-2 ">
                                 {priceRanges?.map((items, i) => (
-                                    <div key={i} className="cursor-pointer p-2 justify-center items-center rounded border border-gray-300 text-gray-900 hover:bg-fuchsia-950 hover:text-white transition-color duration-300 ease-out">
-                                        <h3>{items}</h3>
+                                    <div onClick={() => handlePrice(items)} key={i} className={selectedPrice == items ? "cursor-pointer p-2 justify-center items-center rounded border border-gray-300 bg-fuchsia-950 text-white" : "cursor-pointer p-2 justify-center items-center rounded border border-gray-300 text-gray-900 hover:bg-fuchsia-950 hover:text-white transition-color duration-300 ease-out"}>
+                                        <h3 >{items}</h3>
                                     </div>
                                 ))}
                             </div>}
@@ -126,26 +167,29 @@ function Event() {
                 </div>
 
 
-
-
                 {/* ---------------- Right Side ---------------- */}
                 <div className=" w-full md:pt-6 md:px-10 ">
-                    <h1 className="text-3xl font-bold mb-6 text-white">Events near you</h1>
+                    <h1 className="text-3xl font-bold mb-6 text-white">{selectedLocation == "" ? "Events for you" : `Events in ${selectedLocation}`}</h1>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
 
-                        {events.map((e, i) => (
-                            <Link key={i} to={"/1/event-view"}>
+                        {events.map((item, i) => (
+                            <Link key={i} to={`/view-event/${item._id}`}>
                                 <div
-
                                     className="bg-white shadow-lg rounded-xl overflow-hidden hover:shadow-xl transition"
                                 >
-                                    <img src={e.img} alt="event" className="w-full h-64 object-cover" />
-                                    <div className="p-4">
-                                        <p className="text-sm text-gray-500">{e.date}</p>
-                                        <h3 className="text-lg font-bold">{e.title}</h3>
-                                        <p className="text-gray-600">{e.location}</p>
-                                        <p className="mt-2 font-semibold">{e.price} onwards</p>
+                                    <img src={item.poster == "" ? noImage : `${serverURL}/imageUploads/${item.poster}`} alt="event" className="w-full h-64 object-cover" />
+                                    <div className="p-4 flex flex-col justify-around" style={{ height: "150px" }}>
+                                        <p className="text-sm text-gray-500">
+                                            {new Date(item.date).toLocaleDateString("en-GB", {
+                                                day: "2-digit",
+                                                month: "long",
+                                                year: "numeric",
+                                            })}
+                                        </p>
+                                        <h3 className="text-lg font-bold">{item.title}</h3>
+                                        <p className="text-gray-600">{item.location}</p>
+                                        <p className="mt-2 font-semibold">{item.price == "" ? "Free Entry " : `₹${item.price} onwards`}</p>
                                     </div>
                                 </div>
                             </Link>

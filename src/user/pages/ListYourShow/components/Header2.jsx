@@ -1,7 +1,7 @@
 import { GrMenu } from "react-icons/gr";
 import { TbHome } from "react-icons/tb";
 import { Link, Links } from "react-router-dom";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { AiOutlineClose } from "react-icons/ai";
@@ -12,6 +12,7 @@ export default function Header2({ active }) {
     const modalSlide = useRef(null);
     const menuItemsRef = useRef([]);
     const [modal, setModal] = useState(false);
+    const [token, setToken] = useState("")
     // console.log(active);
 
 
@@ -67,7 +68,10 @@ export default function Header2({ active }) {
         },
         { dependencies: [modal] }
     );
-
+    useEffect(() => {
+        const token = sessionStorage.getItem("token")
+        setToken(token)
+    }, [])
     return (
         <>
             <header className=" w-full fixed flex md:gap-56 px-2 md:px-0 z-100  ">
@@ -81,7 +85,7 @@ export default function Header2({ active }) {
                             <li><Link to="/">Home</Link></li>
                             <li className={active == "dashboard" ? "font-semibold text-fuchsia-800" : ""}><Link to="/your-shows">Dashbord</Link></li>
                             <li className={active == "addshows" ? "font-semibold text-fuchsia-800" : ""}><Link to="/your-shows/add-shows">Add Shows</Link></li>
-                            <li className={active == "myshows" ? "font-semibold text-fuchsia-800" : ""}><Link to="/your-shows/booking-details">Booking Details</Link></li>
+                            <li className={active == "booking-details" ? "font-semibold text-fuchsia-800" : ""}><Link to="/your-shows/booking-details">Booking Details</Link></li>
 
                         </ul>
                     </nav>
@@ -105,7 +109,7 @@ export default function Header2({ active }) {
                         </button>
                         <div ref={menuItemsRef} className="p-10 text-2xl font-bold space-y-6">
                             <div className="flex flex-col cursor-pointer text-purple-900 justify-center items-center md:gap-0 gap-10">
-                                <h1 className=" hover:text-fuchsia-700 md:mt-5">Login</h1>
+                                {!token&&<h1 className=" hover:text-fuchsia-700 md:mt-5">Login</h1>}
                                 <div className="h-px w-75 bg-gray-200 md:mt-3"></div>
                                 <Link to={"/profile "}><h1 className=" hover:text-fuchsia-700 md:mt-5">Profile</h1></Link>
                                 <div className="h-px w-75 bg-gray-200 md:mt-3"></div>
