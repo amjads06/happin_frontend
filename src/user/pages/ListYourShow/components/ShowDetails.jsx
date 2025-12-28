@@ -53,7 +53,7 @@ function ShowDetails() {
             contact,
         } = editShowDetails;
 
-        if (!title || !location || !description ||!venueDetails ||!category ||!contact
+        if (!title || !location || !description || !venueDetails || !category || !contact
         ) {
             toast.info("Fill all the fields");
             return;
@@ -76,7 +76,9 @@ function ShowDetails() {
 
             if (result.status === 200) {
                 toast.success("Event updated successfully");
-                window.location.reload()
+                setTimeout(() => {
+                    window.location.reload()
+                },[3000])
                 setEditModal(false)
             }
             else {
@@ -137,7 +139,7 @@ function ShowDetails() {
                     <DetailBox title={show.location} label="Location" />
                     <DetailBox title={show.category} label="Category" />
                     <DetailBox title={show.capacity} label="Seat Limit" />
-                    <DetailBox title={(show.price==""?"Free":show.price)} label="Price" />
+                    <DetailBox title={(show.price == "" ? "Free" : show.price)} label="Price" />
                     <DetailBox title={show.duration} label="Duration" />
                     <DetailBox title={show.type} label="Type" />
                     <DetailBox title={show.contact} label="Contact" />
@@ -262,7 +264,7 @@ function ShowDetails() {
                                     <label htmlFor="poster" className="block text-gray-700 font-medium mb-1">Upload Poster
                                         {preview ? <img className="ml-2 object-cover" src={preview} alt="" style={{ width: "100px" }} /> :
                                             <img className="ml-2" src={editShowDetails.poster == "" ? "https://toppng.com/uploads/preview/file-upload-image-icon-115632290507ftgixivqp.png" : `${serverURL}/imageUploads/${editShowDetails.poster}`} alt="" style={{ width: "100px" }} />}
-                                        <input id="poster"  accept="image/*" onChange={handleUploadImage} type="file" className="w-full text-gray-700" hidden />
+                                        <input id="poster" accept="image/*" onChange={handleUploadImage} type="file" className="w-full text-gray-700" hidden />
                                     </label>
 
                                 </div>

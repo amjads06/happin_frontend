@@ -114,7 +114,11 @@ function YourShow() {
                 <div>
                   <h3 className="text-xl font-semibold">{show.title}</h3>
                   <p className="text-gray-600 text-sm">
-                    {show.date} • {show.location}
+                    {new Date(show.date).toLocaleDateString("en-GB", {
+                                                day: "2-digit",
+                                                month: "long",
+                                                year: "numeric",
+                                            })} • {show.location}
                   </p>
                 </div>
 

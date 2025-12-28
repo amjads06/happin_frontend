@@ -1,11 +1,40 @@
 import { HiOutlineUsers, HiOutlineCalendar, HiOutlineCurrencyRupee, HiOutlineTrendingUp } from "react-icons/hi";
 import AdminSidebar from "../components/AdminSideBar";
+import { useEffect, useState } from "react";
+import { getAllEventsAdminAPI, getAllUsersAPI } from "../../services/allAPI";
+import { MdEventAvailable } from "react-icons/md";
 
 export default function AdminHome() {
+
+    const [users, setUsers] = useState([])
+    const [events, setEvents] = useState([])
+
+    const totalNoOfUsers = users.length
+    const TotalEvents = events.length
+    const pendingApprovals = events.filter((event) => event.status == "Pending").length
+    const ApprovedEvents = events.filter((event) => event.status == "Approved").length
+    const getAllUsers = async () => {
+        const token = sessionStorage.getItem("token")
+        const reqHeader = {
+            "Authorization": `Bearer ${token}`
+        }
+        const result = await getAllUsersAPI(reqHeader)
+        const events = await getAllEventsAdminAPI()
+        setEvents(events.data)
+
+        console.log(result);
+
+        setUsers(result.data)
+
+    }
+
+    useEffect(() => {
+        getAllUsers()
+    }, [])
     return (
         <div className="min-h-screen bg-white flex">
 
-            <AdminSidebar/>
+            <AdminSidebar />
 
             {/* MAIN CONTENT */}
             <main className="flex-1 p-10">
@@ -21,36 +50,43 @@ export default function AdminHome() {
                     </div>
                 </div>
 
-                <div className="grid md:grid-cols-4 gap-6 mb-10">
+                <div className="grid md:grid-cols-2 gap-6 mb-10">
                     {/* CARD 1 */}
-                    <div className="p-6 bg-white shadow-md rounded-xl border border-gray-100">
+                    <div className="p-6 bg-white shadow-md rounded-xl border border-gray-100 flex flex-col justify-center items-center">
                         <HiOutlineUsers className="text-4xl text-purple-600 mb-2" />
-                        <h3 className="text-2xl font-bold text-gray-800">4,523</h3>
+                        <h3 className="text-2xl font-bold text-gray-800">{totalNoOfUsers}</h3>
                         <p className="text-gray-500">Total Users</p>
                     </div>
                     {/* CARD 2 */}
-                    <div className="p-6 bg-white shadow-md rounded-xl border border-gray-100">
-                        <HiOutlineCalendar className="text-4xl text-green-600 mb-2" />
-                        <h3 className="text-2xl font-bold text-gray-800">312</h3>
+                    <div className="p-6 bg-white shadow-md rounded-xl border border-gray-100 flex flex-col justify-center items-center">
+                        <HiOutlineCalendar className="text-4xl text-blue-600 mb-2" />
+                        <h3 className="text-2xl font-bold text-gray-800">{TotalEvents}</h3>
                         <p className="text-gray-500">Total Events</p>
                     </div>
                     {/* CARD 3 */}
-                    <div className="p-6 bg-white shadow-md rounded-xl border border-gray-100">
-                        <HiOutlineCurrencyRupee className="text-4xl text-blue-600 mb-2" />
-                        <h3 className="text-2xl font-bold text-gray-800">₹8,72,400</h3>
-                        <p className="text-gray-500">Revenue</p>
+                    <div className="p-6 bg-white shadow-md rounded-xl border border-gray-100 flex flex-col justify-center items-center">
+                        <MdEventAvailable className="text-4xl text-green-600 mb-2" />
+                        <h3 className="text-2xl font-bold text-gray-800">{ApprovedEvents}</h3>
+                        <p className="text-gray-500">Total Events Approved</p>
                     </div>
+                    {/* CARD 4 */}
+                    <div className="p-6 bg-white shadow-md rounded-xl border border-gray-100 flex flex-col justify-center items-center">
+                        <MdEventAvailable className="text-4xl text-orange-600 mb-2" />
+                        <h3 className="text-2xl font-bold text-gray-800">{pendingApprovals}</h3>
+                        <p className="text-gray-500">Events pending to approve</p>
+                    </div>
+
                 </div>
 
                 {/*CHARTS */}
-                <div className="grid md:grid-cols-2 gap-6">
+                {/* <div className="grid md:grid-cols-2 gap-6">
                     <div className="p-6 bg-white shadow-md rounded-xl border border-gray-100 h-64 flex items-center justify-center text-gray-400">
                         Chart: Event Growth
                     </div>
                     <div className="p-6 bg-white shadow-md rounded-xl border border-gray-100 h-64 flex items-center justify-center text-gray-400">
                         Chart: Revenue
                     </div>
-                </div>
+                </div> */}
             </main>
         </div>
     );

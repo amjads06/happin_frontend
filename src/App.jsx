@@ -21,6 +21,8 @@ import AddShow from './user/pages/ListYourShow/AddShow'
 import BookingDetails from './user/pages/ListYourShow/BookingDetails'
 import { ToastContainer } from 'react-toastify'
 import ShowDetails from './user/pages/ListYourShow/components/ShowDetails'
+import Booking from './user/pages/Booking'
+import BookingSuccess from './user/pages/BookingSuccess'
 
 function App() {
 
@@ -49,6 +51,9 @@ function App() {
         <Route path='/my-bookings' element={< UserBookings />} />
         <Route path='/profile' element={< Profile />} />
         <Route path='/view-event/:id' element={<EventView />} />
+        <Route path='/book-event/:id' element={<Booking />} />
+        <Route path="/booking-success/:bookingId" element={<BookingSuccess/>} />
+
         {/* List your Show by users */}
         <Route path='/your-shows/add-shows' element={<AddShow />} />
         <Route path='/your-shows/show-details/:id' element={<ShowDetails />} />

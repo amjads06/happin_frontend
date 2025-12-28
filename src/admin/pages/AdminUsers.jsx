@@ -1,6 +1,39 @@
+import { useEffect, useState } from "react";
 import AdminSidebar from "../components/AdminSideBar";
+import { getAllUsersAPI, removeUserAPI } from "../../services/allAPI";
+import { toast } from "react-toastify";
 
 export default function AdminUsers() {
+
+    const [users, setUsers] = useState([])
+
+    const getAllUsers = async () => {
+        const token = sessionStorage.getItem("token")
+        const reqHeader = {
+            "Authorization": `Bearer ${token}`
+        }
+        const result = await getAllUsersAPI(reqHeader)
+        setUsers(result.data)
+    }
+
+    const handleRemoveUser = async (id) => {
+
+        const result = await removeUserAPI(id)
+        
+
+        if (result.status == 200) {
+            toast.success("user removed successfully")
+            setTimeout(() => {
+                window.location.reload()
+            }, [3000])
+        } else {
+            toast.error("Something went wrong")
+        }
+    }
+
+    useEffect(() => {
+        getAllUsers()
+    }, [])
     return (
         <div className="min-h-screen bg-white flex">
 
@@ -38,28 +71,18 @@ export default function AdminUsers() {
                         <tbody>
 
                             {/* SAMPLE ROW 1 */}
-                            <tr className="border-b hover:bg-gray-50 transition">
-                                <td className="p-4 text-gray-600">USR001</td>
-                                <td className="p-4 text-gray-800">John Doe</td>
-                                <td className="p-4 text-gray-600">john@example.com</td>
-                                <td className="p-4 text-center">
-                                    <button className="px-3 py-1 text-sm bg-red-500 text-white rounded-lg hover:bg-red-600 transition">
-                                        Remove
-                                    </button>
-                                </td>
-                            </tr>
-
-                            {/* SAMPLE ROW 2 */}
-                            <tr className="border-b hover:bg-gray-50 transition">
-                                <td className="p-4 text-gray-600">USR002</td>
-                                <td className="p-4 text-gray-800">Amjad</td>
-                                <td className="p-4 text-gray-600">amjad@example.com</td>
-                                <td className="p-4 text-center">
-                                    <button className="px-3 py-1 text-sm bg-red-500 text-white rounded-lg hover:bg-red-600 transition">
-                                        Remove
-                                    </button>
-                                </td>
-                            </tr>
+                            {users?.map((user, index) => (
+                                <tr key={index} className="border-b hover:bg-gray-50 transition">
+                                    <td className="p-4 text-gray-600">ID-{user._id}</td>
+                                    <td className="p-4 text-gray-800">{user.username}</td>
+                                    <td className="p-4 text-gray-600">{user.email}</td>
+                                    <td className="p-4 text-center">
+                                        <button onClick={() => handleRemoveUser(user._id)} className="px-3 py-1 text-sm bg-red-500 text-white rounded-lg hover:bg-red-600 transition">
+                                            Remove
+                                        </button>
+                                    </td>
+                                </tr>
+                            ))}
 
                         </tbody>
                     </table>

@@ -1,33 +1,74 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AdminSidebar from "../components/AdminSideBar";
+import { deleteAEventAdminAPI, getAllEventsAdminAPI, updateEventStatusAPI } from "../../services/allAPI";
+import noImg from "../../assets/photos/Gemini_Generated_Image_v6b8a2v6b8a2v6b8.png"
+import serverURL from "../../services/serverURL";
+import { toast } from "react-toastify";
 
 export default function AdminEvents() {
 
     const [showModal, setShowModal] = useState(false);
     const [modalType, setModalType] = useState(""); // "view" | "edit" | "add"
     const [selectedEvent, setSelectedEvent] = useState(null);
+    const [ShowDetails, setShowDetails] = useState({
+        poster: "",
+        title: "",
+        date: "",
+        time: "",
+        duration: "",
+        location: "",
+        status: "",
+        price: "",
+        capacity: "",
+        description: "",
+        venueDetails: "",
+        category: "",
+        type: "",
+        contact: "",
+    })
 
-    // Sample enhanced event data
-    const events = [
-        {
-            id: "EVT001",
-            title: "Music Fest",
-            organizer: "John Doe",
-            date: "2025-02-12",
-            time: "7:00 PM",
-            duration: "2 Hours",
-            ageLimit: "5+",
-            languages: "English, Hindi",
-            genres: "Music, Live Concert",
-            venue: "Bolgatti Palace, Kochi",
-            price: "₹999 onwards",
-            banner:
-                "https://assets-in.bmscdn.com/nmcms/desktop/media-desktop-karthik-live-kochi-2025-10-9-t-12-41-40.jpg",
-            about:
-                "This is a sample event description. Replace with actual event details provided by user.",
-            status: "Pending",
+    const [events, setEvents] = useState([])
+
+    const getAllUsers = async () => {
+        const token = sessionStorage.getItem("token")
+        const reqHeader = {
+            "Authorization": `Bearer ${token}`
         }
-    ];
+        const events = await getAllEventsAdminAPI()
+        setEvents(events.data)
+    }
+
+    const handleStatus = async (id, UpdatedStatus) => {
+        const reqBody = { status: UpdatedStatus }
+        const result = await updateEventStatusAPI(id, reqBody)
+        console.log(result.data);
+
+        if (result.status == 200) {
+            toast.success("evnet status updated successfully")
+            setTimeout(() => {
+                window.location.reload()
+            }, [3000])
+        } else {
+            toast.error("Something went wrong")
+        }
+    }
+
+    const handleDelete = async (id) => {
+        const result = await deleteAEventAdminAPI(id)
+        console.log(result);
+
+        if (result.status == 200) {
+            toast.success("Event deleted successfully")
+            setTimeout(() => {
+                window.location.reload()
+            }, [3000])
+        } else {
+            toast.error("something went wrong")
+        }
+    }
+    useEffect(() => {
+        getAllUsers()
+    }, [])
 
     const openModal = (type, event = null) => {
         setModalType(type);
@@ -75,11 +116,11 @@ export default function AdminEvents() {
                         </thead>
 
                         <tbody>
-                            {events.map((e) => (
-                                <tr key={e.id} className="border-b hover:bg-gray-50 transition">
-                                    <td className="p-4 text-gray-600">{e.id}</td>
-                                    <td className="p-4 text-gray-800">{e.title}</td>
-                                    <td className="p-4 text-gray-600">{e.organizer}</td>
+                            {events.map((e, i) => (
+                                <tr key={i} className="border-b hover:bg-gray-50 transition">
+                                    <td className="p-4 text-gray-600">{e._id}</td>
+                                    <td onClick={() => openModal("view", e)} className="p-4 text-gray-800 hover:text-purple-600 cursor-pointer">{e.title}</td>
+                                    <td className="p-4 text-gray-600">{e.uploadedBy}</td>
                                     <td className="p-4 text-gray-600">{e.date}</td>
                                     <td className="p-4">
                                         <span
@@ -93,25 +134,14 @@ export default function AdminEvents() {
                                         </span>
                                     </td>
 
-                                    <td className="p-4 text-center space-x-2">
-                                        <button
-                                            className="px-3 py-1 text-sm bg-blue-500 text-white rounded-lg hover:bg-blue-600"
-                                            onClick={() => openModal("view", e)}
-                                        >View</button>
-
-                                        <button
-                                            className="px-3 py-1 text-sm bg-green-500 text-white rounded-lg hover:bg-green-600"
-                                            onClick={() => openModal("edit", e)}
-                                        >Edit</button>
-
+                                    <td className="p-4 text-center flex gap-2 items-center justify-center">
                                         {e.status === "Pending" && (
                                             <>
-                                                <button className="px-3 py-1 text-sm bg-purple-500 text-white rounded-lg hover:bg-purple-600">Accept</button>
-                                                <button className="px-3 py-1 text-sm bg-yellow-500 text-white rounded-lg hover:bg-yellow-600">Reject</button>
+                                                <button onClick={() => handleStatus(e._id, "Approved")} className="px-3 py-1 text-sm bg-green-600 text-white rounded-lg hover:bg-green-700">Accept</button>
+                                                <button onClick={() => handleStatus(e._id, "Rejected")} className="px-3 py-1 text-sm bg-yellow-500 text-white rounded-lg hover:bg-yellow-600">Reject</button>
                                             </>
                                         )}
-
-                                        <button className="px-3 py-1 text-sm bg-red-500 text-white rounded-lg hover:bg-red-600">Delete</button>
+                                        <button onClick={() => handleDelete(e._id)} className="px-3 py-1 text-sm bg-red-500 text-white rounded-lg hover:bg-red-600">Delete</button>
                                     </td>
                                 </tr>
                             ))}
@@ -122,7 +152,7 @@ export default function AdminEvents() {
                 {/* MODAL */}
                 {showModal && (
                     <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 p-4">
-                        
+
                         {/* VIEW MODAL */}
                         {modalType === "view" && selectedEvent && (
                             <div className="bg-white rounded-xl p-6 w-full max-w-4xl max-h-[90vh] overflow-y-auto shadow-xl">
@@ -136,21 +166,21 @@ export default function AdminEvents() {
 
                                         {/* Banner */}
                                         <img
-                                            src={selectedEvent.banner}
+                                            src={selectedEvent.poster == "" ? noImg : `${serverURL}/imageUploads/${selectedEvent.poster}`}
                                             className="rounded-xl w-full h-[260px] object-cover shadow"
                                         />
 
                                         {/* Tags */}
                                         <div className="flex gap-3 mt-4 flex-wrap">
                                             <span className="px-3 py-1 bg-gray-200 rounded-lg text-sm">
-                                                {selectedEvent.genres}
+                                                {selectedEvent.category}
                                             </span>
                                         </div>
 
                                         {/* About */}
                                         <h2 className="mt-8 text-xl font-bold">About The Event</h2>
                                         <p className="mt-3 text-gray-700 leading-relaxed">
-                                            {selectedEvent.about}
+                                            {selectedEvent.description}
                                         </p>
 
                                     </div>
@@ -161,11 +191,12 @@ export default function AdminEvents() {
                                         <p className="mb-3"><b>Date:</b> {selectedEvent.date}</p>
                                         <p className="mb-3"><b>Time:</b> {selectedEvent.time}</p>
                                         <p className="mb-3"><b>Duration:</b> {selectedEvent.duration}</p>
-                                        <p className="mb-3"><b>Age:</b> {selectedEvent.ageLimit}</p>
-                                        <p className="mb-3"><b>Languages:</b> {selectedEvent.languages}</p>
-                                        <p className="mb-3"><b>Venue:</b> {selectedEvent.venue}</p>
+                                        <p className="mb-3"><b>contact:</b> {selectedEvent.contact}</p>
+                                        <p className="mb-3"><b>category:</b> {selectedEvent.category}</p>
+                                        <p className="mb-3"><b>Venue:</b> {selectedEvent.venueDetails}</p>
+                                        <p className="mb-3"><b>capacity:</b> {selectedEvent.capacity}</p>
 
-                                        <div className="text-xl font-bold mt-2">{selectedEvent.price}</div>
+                                        <div className="text-xl font-bold mt-2">{selectedEvent.price == "" ? "FREE" : `₹${selectedEvent.price}`}</div>
 
                                     </div>
                                 </div>
@@ -182,12 +213,11 @@ export default function AdminEvents() {
                             </div>
                         )}
 
-                        {/* ADD / EDIT MODAL (unchanged) */}
-                        {(modalType === "edit" || modalType === "add") && (
+                        {/* Add modal */}
+                        {/* {(modalType === "add") && (
                             <div className="bg-white p-6 w-[90%] md:w-[500px] rounded-xl shadow-xl">
 
                                 <h2 className="text-xl font-bold mb-4">
-                                    {modalType === "edit" && "Edit Event"}
                                     {modalType === "add" && "Add New Event"}
                                 </h2>
 
@@ -220,10 +250,138 @@ export default function AdminEvents() {
                                 </div>
 
                             </div>
-                        )}
+                        )} */}
+
+                        {modalType == "add" && (
+                    <>
+                        <div onClick={closeModal} className="w-full fixed bg-black/30 inset-0 z-101 backdrop-blur-sm"></div>
+                        <div className="bg-white fixed top-17 md:left-[24%] py-8 px-8 z-102 rounded-xl w-200">
+                            <div className="flex *:flex-1 gap-10 w-full">
+                                <div>
+                                    <div>
+                                        <label className="block text-gray-700 font-medium mb-1">Show Title</label>
+                                        <input value={ShowDetails.title} onChange={(e) =>
+                                            setShowDetails({ ...ShowDetails, title: e.target.value })
+                                        } type="text" placeholder="Enter show title" className="w-full p-3 border rounded-lg bg-white focus:border-purple-500 outline-none" />
+                                    </div>
+
+                                    {/* Date */}
+                                    <div>
+                                        <label className="block text-gray-700 font-medium mb-1">Date</label>
+                                        <input value={ShowDetails.date} onChange={(e) =>
+                                            setShowDetails({ ...ShowDetails, date: e.target.value })} type="date" className="w-full p-3 border rounded-lg bg-white focus:border-purple-500 outline-none" />
+                                    </div>
+
+                                    {/* Time */}
+                                    <div>
+                                        <label className="block text-gray-700 font-medium mb-1">Time</label>
+                                        <input value={ShowDetails.time} onChange={(e) =>
+                                            setShowDetails({ ...ShowDetails, time: e.target.value })} type="time" className="w-full p-3 border rounded-lg bg-white focus:border-purple-500 outline-none" />
+                                    </div>
+
+                                    {/* Duration */}
+                                    <div>
+                                        <label className="block text-gray-700 font-medium mb-1">Duration</label>
+                                        <input value={ShowDetails.duration} onChange={(e) =>
+                                            setShowDetails({ ...ShowDetails, duration: e.target.value })} type="text" placeholder="Duration (eg: 2 Hours)" className="w-full p-3 border rounded-lg bg-white focus:border-purple-500 outline-none" />
+                                    </div>
+
+                                    {/* Location */}
+                                    <div>
+                                        <label className="block text-gray-700 font-medium mb-1">Location</label>
+                                        <input value={ShowDetails.location} onChange={(e) =>
+                                            setShowDetails({ ...ShowDetails, location: e.target.value })} type="text" placeholder="Kochi / Bangalore / Chennai" className="w-full p-3 border rounded-lg bg-white focus:border-purple-500 outline-none" />
+                                    </div>
+
+                                    {/* Category */}
+                                    <div>
+                                        <label className="block text-gray-700 font-medium mb-1">Category</label>
+                                        <input value={ShowDetails.category} onChange={(e) =>
+                                            setShowDetails({ ...ShowDetails, category: e.target.value })} type="text" placeholder="General / Music / Comedy" className="w-full p-3 border rounded-lg bg-white focus:border-purple-500 outline-none" />
+                                    </div>
+                                    {/* Contact */}
+                                    <div>
+                                        <label className="block text-gray-700 font-medium mb-1">Contact</label>
+                                        <input value={ShowDetails.contact} onChange={(e) =>
+                                            setShowDetails({ ...ShowDetails, contact: e.target.value })} type="text" placeholder="General / Music / Comedy" className="w-full p-3 border rounded-lg bg-white focus:border-purple-500 outline-none" />
+                                    </div>
+                                </div>
+                                <div>
+
+                                    {/* Duration */}
+                                    <div>
+                                        <label className="block text-gray-700 font-medium mb-1">Type</label>
+                                        <select value={ShowDetails.type} onChange={(e) =>
+                                            setShowDetails({ ...ShowDetails, type: e.target.value })}
+                                            className="w-full p-3 border rounded-lg bg-white focus:border-purple-500 outline-none"
+                                        >
+                                            <option value="">Select Type</option>
+                                            <option value="event">Event</option>
+                                            <option value="sport">Sport</option>
+                                        </select>
+                                    </div>
+
+                                    {/* Description */}
+                                    <div>
+                                        <label className="block text-gray-700 font-medium mb-1">Description</label>
+                                        <textarea onChange={(e) =>
+                                            setShowDetails({ ...ShowDetails, description: e.target.value })} value={ShowDetails.description} rows="3" placeholder="Enter show description" className="w-full p-3 border rounded-lg bg-white focus:border-purple-500 outline-none"></textarea>
+                                    </div>
+
+                                    {/* Venue Details */}
+                                    <div>
+                                        <label className="block text-gray-700 font-medium mb-1">Venue Details</label>
+                                        <textarea value={ShowDetails.venueDetails} onChange={(e) =>
+                                            setShowDetails({ ...ShowDetails, venueDetails: e.target.value })} rows="3" placeholder="Enter venue details" className="w-full p-3 border rounded-lg bg-white focus:border-purple-500 outline-none"></textarea>
+                                    </div>
+
+                                    {/* Price + Seats */}
+                                    <div className="grid md:grid-cols-2 gap-5">
+                                        <div>
+                                            <label className="block text-gray-700 font-medium mb-1">Ticket Price (₹)</label>
+                                            <input value={ShowDetails.price} onChange={(e) =>
+                                                setShowDetails({ ...ShowDetails, price: e.target.value })} type="text" placeholder="e.g. 299" className="w-full p-3 border rounded-lg bg-white focus:border-purple-500 outline-none" />
+                                        </div>
+
+                                        <div>
+                                            <label className="block text-gray-700 font-medium mb-1">Capacity</label>
+                                            <input value={ShowDetails.capacity} onChange={(e) =>
+                                                setShowDetails({ ...ShowDetails, capacity: e.target.value })} type="text" placeholder="e.g. 120" className="w-full p-3 border rounded-lg bg-white focus:border-purple-500 outline-none" />
+                                        </div>
+                                    </div>
+
+                                    {/* Upload Poster */}
+                                    <div>
+                                        {/* <label htmlFor="poster" className="block text-gray-700 font-medium mb-1">Upload Poster
+                                            {preview ? <img className="ml-2 object-cover" src={preview} alt="" style={{ width: "100px" }} /> :
+                                                <img className="ml-2" src={editShowDetails.poster == "" ? "https://toppng.com/uploads/preview/file-upload-image-icon-115632290507ftgixivqp.png" : `${serverURL}/imageUploads/${editShowDetails.poster}`} alt="" style={{ width: "100px" }} />}
+                                            <input id="poster" accept="image/*" onChange={handleUploadImage} type="file" className="w-full text-gray-700" hidden />
+                                        </label> */}
+
+                                    </div>
+
+
+                                    {/* Submit Button */}
+                                    <div className="flex gap-5">
+                                        <button type="button" className="w-full mt-4 py-3 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 transition">Reset</button>
+                                        <button
+                                        //  onClick={handleSubmit} 
+                                         type="button" className="w-full mt-4 py-3 bg-purple-600 text-white font-semibold rounded-lg hover:bg-purple-700 transition">Update</button>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                    </>
+                )}
 
                     </div>
                 )}
+
+                
+
 
             </main>
         </div>

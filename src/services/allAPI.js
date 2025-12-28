@@ -78,3 +78,38 @@ export const updateEventAPI = async (id,reqBody, reqHeader) => {
 export const deleteAEventAPI = async (id) => {
   return await commonAPI("DELETE", `${serverURL}/delete-event/${id}`, "");
 };
+
+
+// Book an event
+export const bookAnEventAPI = async (id,reqBody,reqHeader) => {
+  return await commonAPI("PUT", `${serverURL}/book-event/${id}`,reqBody,reqHeader);
+};
+
+
+// ----------------------------------------ADMIN------------------------------------------------------
+
+// get all users
+export const getAllUsersAPI = async (reqHeader) => {
+  return await commonAPI("GET", `${serverURL}/all-users`,"",reqHeader);
+};
+
+// get all events for admin
+export const getAllEventsAdminAPI = async () => {
+  return await commonAPI("GET", `${serverURL}/all-events-admin`,);
+};
+
+// remove a user API
+export const removeUserAPI = async (id) => {
+  return await commonAPI("DELETE", `${serverURL}/remove-user/${id}`, "");
+};
+
+// Update events Status
+export const updateEventStatusAPI = async (id,reqBody) => {
+  return await commonAPI("PUT", `${serverURL}/update-event-status/${id}`,reqBody);
+};
+
+
+// delete a event Admin API
+export const deleteAEventAdminAPI = async (id) => {
+  return await commonAPI("DELETE", `${serverURL}/delete-event-admin/${id}`, "");
+};

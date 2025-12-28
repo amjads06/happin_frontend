@@ -9,7 +9,7 @@ import {
 } from "react-icons/fa";
 import Header from "../../common/components/Header";
 import Footer from "../../common/components/Footer";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { getAEventAPI } from "../../services/allAPI";
 import noimg from "../../assets/photos/Gemini_Generated_Image_v6b8a2v6b8a2v6b8.png"
 import serverURL from "../../services/serverURL";
@@ -18,22 +18,22 @@ import { IoIosCall } from "react-icons/io";
 import { BiCategoryAlt } from "react-icons/bi";
 
 function EventView() {
-    
-    const {id}=useParams()
+
+    const { id } = useParams()
     // console.log(id);
 
-    const [eventData,setEventData]=useState({})
+    const [eventData, setEventData] = useState({})
 
-    const getEvent=async()=>{
-        const result=await getAEventAPI(id)
+    const getEvent = async () => {
+        const result = await getAEventAPI(id)
         // console.log(result.data);
         setEventData(result.data)
-        
+
     }
-    
-    useEffect(()=>{
+
+    useEffect(() => {
         getEvent()
-    },[])
+    }, [])
 
     return (
         <>
@@ -51,7 +51,7 @@ function EventView() {
                         {/* Banner Image */}
                         <div className="rounded-2xl overflow-hidden shadow">
                             <img
-                                src={eventData?.poster==""?noimg:`${serverURL}/imageUploads/${eventData.poster}`}
+                                src={eventData?.poster == "" ? noimg : `${serverURL}/imageUploads/${eventData.poster}`}
                                 alt="Event Banner"
                                 className="w-full h-[380px] object-cover object-top"
                             />
@@ -63,7 +63,7 @@ function EventView() {
                             <span className="px-3 py-1 bg-gray-200 rounded-lg text-sm">{eventData.category}</span>
                         </div>
 
-                     
+
 
                         {/* ABOUT SECTION */}
                         <h2 className="mt-10 text-2xl font-bold">About The Event</h2>
@@ -80,10 +80,10 @@ function EventView() {
                         <div className="flex items-center gap-3 mb-4">
                             <FaCalendarAlt className="text-gray-700" />
                             <span>{new Date(eventData.date).toLocaleDateString("en-GB", {
-                                                day: "2-digit",
-                                                month: "long",
-                                                year: "numeric",
-                                            })}</span>
+                                day: "2-digit",
+                                month: "long",
+                                year: "numeric",
+                            })}</span>
                         </div>
 
                         <div className="flex items-center gap-3 mb-4">
@@ -97,7 +97,7 @@ function EventView() {
                             <span>{eventData.duration} Hours</span>
                         </div>
 
-                        
+
                         <div className="flex items-center gap-3 mb-4">
                             <BiCategoryAlt className="text-gray-700" />
                             <span>{eventData.category}</span>
@@ -113,11 +113,11 @@ function EventView() {
                             <span>{eventData.contact}</span>
                         </div>
 
-                        <div className="text-xl font-bold mb-1">{eventData.price==""?"FREE":`₹${eventData.price} onwards`}</div>
+                        <div className="text-xl font-bold mb-1">{eventData.price == "" ? "FREE" : `₹${eventData.price} onwards`}</div>
 
-                        <button className="w-full bg-pink-600 text-white py-3 mt-5 rounded-xl hover:bg-pink-500 transition">
+                        <Link to={`/book-event/${eventData._id}`}>  <button className="w-full bg-pink-600 text-white py-3 mt-5 rounded-xl hover:bg-pink-500 transition">
                             Book Now
-                        </button>
+                        </button></Link>
                     </div>
                 </div>
             </div>

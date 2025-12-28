@@ -17,6 +17,8 @@ function Event() {
 
     const [categorieButton, setCategorieButton] = useState(false)
     const [locationButton, setLocationButton] = useState(false)
+    const [priceButton, setPriceButton] = useState(false)
+
     const [categories, setAllCategory] = useState([])
     const [selectedCategory, setSelectedCategory] = useState("");
 
@@ -25,9 +27,6 @@ function Event() {
 
     const [selectedPrice, setSelectedPrice] = useState("")
 
-
-
-    const [priceButton, setPriceButton] = useState(false)
     const [events, setEvents] = useState([])
     const [tempEvents, setTempEvents] = useState([])
     const { searchKey } = useEventStore();
@@ -140,12 +139,12 @@ function Event() {
                     {/* Price */}
                     <div className="w-full flex flex-col gap-1 md:pt-8 ">
                         <div className="h-auto flex-col bg-white rounded p-2">
-                            <div className="flex cursor-pointer">
+                            <div  onClick={() => setPriceButton(!priceButton)}  className="flex cursor-pointer">
 
-                                {priceButton ? <button className="px-2"><IoIosArrowUp /></button> :
+                                {priceButton ? <button  className="px-2"><IoIosArrowUp /></button> :
                                     <button className="px-2"><IoIosArrowDown /></button>}
                                 <h1 className="text-lg font-medium text-gray-800"> Price</h1>
-                                {priceButton && <button onClick={() => setPriceButton(!priceButton)} className="text-sm ml-auto mr-2 hover:text-red-600"> Clear</button>}
+                                {priceButton && <button  onClick={() => handlePrice("")} className="text-sm ml-auto mr-2 hover:text-red-600"> Clear</button>}
                             </div>
                             {priceButton && <div className="flex flex-wrap gap-5 md:py-4 md:px-2 ">
                                 {priceRanges?.map((items, i) => (

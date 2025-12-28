@@ -10,8 +10,6 @@ function Auth({ register }) {
     const [passwordVisible, setPasswordVisible] = useState(false);
     const [userDetails, setUserDetails] = useState({ username: "", email: "", password: "" })
     const navigate = useNavigate()
-
-   
     
     const handleLogin = async () => {
         const { email, password } = userDetails
