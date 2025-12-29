@@ -16,7 +16,8 @@ const navigate=useNavigate()
     { name: "Dashboard", path: "/admin-home" },
     { name: "Users", path: "/admin-users" },
     { name: "Events", path: "/admin-events" },
-    { name: "Bookings", path: "/admin-bookings" },
+    { name: "Add Events", path: "/admin-add-events" },
+    { name: "Edit Events", path: "/admin-events-edit"},
     // { name: "Settings", path: "/admin-settings" },
   ];
 

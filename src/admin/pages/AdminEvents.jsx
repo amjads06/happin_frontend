@@ -101,6 +101,8 @@ export default function AdminEvents() {
                     </button>
                 </div>
 
+                <p className="text-gray-400 ml-1 mt-[-25px] mb-[25px]">Click event title to view event!</p>
+
                 {/* EVENTS TABLE */}
                 <div className="bg-white shadow-md rounded-xl border border-gray-100 overflow-x-auto">
                     <table className="w-full text-left min-w-[700px]">
@@ -119,7 +121,7 @@ export default function AdminEvents() {
                             {events.map((e, i) => (
                                 <tr key={i} className="border-b hover:bg-gray-50 transition">
                                     <td className="p-4 text-gray-600">{e._id}</td>
-                                    <td onClick={() => openModal("view", e)} className="p-4 text-gray-800 hover:text-purple-600 cursor-pointer">{e.title}</td>
+                                    <td onClick={() => openModal("view", e)} className="p-4 text-gray-700  hover:text-purple-700 cursor-pointer">{e.title}</td>
                                     <td className="p-4 text-gray-600">{e.uploadedBy}</td>
                                     <td className="p-4 text-gray-600">{e.date}</td>
                                     <td className="p-4">

@@ -94,15 +94,12 @@ function PaymentSuccess() {
     <>
       <Header />
 
-      {/* 🌈 Background */}
-      <div className="min-h-screen flex items-center justify-center px-4 bg-gradient-to-br from-pink-50 via-white to-purple-50">
-        {/* 💎 Card */}
+      <div className="min-h-screen flex items-center justify-center px-4 bg-linear-to-br from-pink-50 via-white to-purple-50">
         <div
           ref={cardRef}
           style={{ willChange: "transform, opacity" }}
           className="relative bg-white/75 backdrop-blur-xl rounded-3xl shadow-[0_20px_60px_rgba(0,0,0,0.12)] p-10 max-w-md w-full text-center border border-white/50"
         >
-          {/* ✅ Success Icon */}
           <div
             ref={iconRef}
             style={{ willChange: "transform, opacity" }}
@@ -111,7 +108,6 @@ function PaymentSuccess() {
             <FaCheckCircle />
           </div>
 
-          {/* 📝 Text */}
           <div
             ref={textRef}
             style={{ willChange: "transform, opacity" }}
@@ -126,7 +122,6 @@ function PaymentSuccess() {
             </p>
           </div>
 
-          {/* 🔘 Buttons (animated as ONE unit) */}
           <div
             ref={buttonsWrapRef}
             style={{ willChange: "transform, opacity" }}
@@ -134,7 +129,7 @@ function PaymentSuccess() {
           >
             <button
               onClick={() => navigate("/")}
-              className="w-full bg-gradient-to-r from-pink-600 to-fuchsia-600 text-white py-3.5 rounded-xl font-semibold text-lg hover:scale-[1.02] hover:shadow-xl transition-all duration-300"
+              className="w-full bg-linear-to-r from-pink-600 to-fuchsia-600 text-white py-3.5 rounded-xl font-semibold text-lg hover:scale-[1.02] hover:shadow-xl transition-all duration-300"
             >
               Go to Home
             </button>

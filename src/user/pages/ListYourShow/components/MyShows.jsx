@@ -62,8 +62,8 @@ function MyShows() {
                                     {/* Status */}
                                     <p
                                         className={`font-semibold pr-10 ${show.status === "Approved"
-                                            ? "text-green-600"
-                                            : "text-orange-500"
+                                            ? "text-green-600" :show.status ==="Rejected"?
+                                             "text-red-600" : "text-yellow-300"
                                             }`}
                                     >
                                         {show.status}

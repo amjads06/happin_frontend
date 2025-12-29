@@ -25,6 +25,9 @@ import Booking from './user/pages/Booking'
 import BookingSuccess from './user/pages/BookingSuccess'
 import PaymentSussecc from './user/pages/PaymentSussecc'
 import PaymentError from './user/pages/PaymentError'
+import AdminAddEvents from './admin/pages/AdminAddEvents'
+import EditEventsAdmin from './admin/pages/EditEventsAdmin'
+import EditShowDetails from './admin/components/EditShowDetails'
 
 function App() {
 
@@ -70,6 +73,9 @@ function App() {
         <Route path='/admin-home' element={<AdminHome />} />
         <Route path='/admin-users' element={<AdminUsers />} />
         <Route path='/admin-events' element={<AdminEvents />} />
+        <Route path='/admin-add-events' element={<AdminAddEvents />}/>
+        <Route path='/admin-events-edit' element={<EditEventsAdmin />}/>
+        <Route path='/admin-events-edit/edit-show-details/:id' element={<EditShowDetails />}/>
       </Routes>
       <ToastContainer
         position="top-center"

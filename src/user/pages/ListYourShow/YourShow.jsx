@@ -18,6 +18,7 @@ function YourShow() {
   const TotaluploadedEvents = events.length
   const pendingApprovals = events.filter((event) => event.status == "Pending").length
   const ApprovedEvents = events.filter((event) => event.status == "Approved").length
+  const RejectedEvents = events.filter((event) => event.status == "Rejected").length
   console.log(pendingApprovals);
 
 
@@ -31,15 +32,15 @@ function YourShow() {
     setAllEvents(result.data)
   }
 
-  const handleDelete=async(id)=>{
-    const result=await deleteAEventAPI(id)
-    if(result.status==200){
-      
+  const handleDelete = async (id) => {
+    const result = await deleteAEventAPI(id)
+    if (result.status == 200) {
+
       toast.success("Event deleted successfully")
-      setTimeout(()=>{
+      setTimeout(() => {
         window.location.reload()
-      },[3000])
-    }else{
+      }, [3000])
+    } else {
       toast.error("something went wrong")
     }
   }
@@ -47,7 +48,7 @@ function YourShow() {
   useEffect(() => {
     getAllEvents()
   }, [])
-  
+
   return (
     <>
       <Header active="dashboard" />
@@ -58,7 +59,7 @@ function YourShow() {
             Dashboard
           </h2>
           {/* Stats Cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full max-w-6xl">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 w-full max-w-6xl">
 
             {/* uploaded Shows */}
             <div className="bg-white rounded-2xl p-6  shadow-sm hover:shadow-lg transition-all">
@@ -76,6 +77,12 @@ function YourShow() {
             <div className="bg-white rounded-2xl p-6  shadow-sm hover:shadow-lg transition-all">
               <h3 className="text-sm font-medium text-gray-500">Pending Approvals</h3>
               <p className="text-4xl font-semibold text-gray-800 mt-2">{pendingApprovals}</p>
+            </div>
+
+            {/* Rejected Approvals */}
+            <div className="bg-white rounded-2xl p-6  shadow-sm hover:shadow-lg transition-all">
+              <h3 className="text-sm font-medium text-gray-500">Rejected Events</h3>
+              <p className="text-4xl font-semibold text-gray-800 mt-2">{RejectedEvents}</p>
             </div>
 
 
@@ -115,10 +122,10 @@ function YourShow() {
                   <h3 className="text-xl font-semibold">{show.title}</h3>
                   <p className="text-gray-600 text-sm">
                     {new Date(show.date).toLocaleDateString("en-GB", {
-                                                day: "2-digit",
-                                                month: "long",
-                                                year: "numeric",
-                                            })} • {show.location}
+                      day: "2-digit",
+                      month: "long",
+                      year: "numeric",
+                    })} • {show.location}
                   </p>
                 </div>
 
@@ -126,15 +133,15 @@ function YourShow() {
               {/* Status */}
               <p
                 className={`font-semibold pr-10 ${show.status === "Approved"
-                  ? "text-green-600"
-                  : "text-orange-500"
+                  ? "text-green-600" : show.status === "Rejected" ?
+                    "text-red-600" : "text-yellow-500"
                   }`}
               >
                 {show.status}
               </p>
               {/* Buttons */}
               <div className="flex gap-5">
-                <button onClick={()=>{handleDelete(show._id)}}
+                <button onClick={() => { handleDelete(show._id) }}
                   className="px-5 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
                 >
                   Delete
