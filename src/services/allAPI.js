@@ -38,7 +38,25 @@ export const getAEventAPI = async (id) => {
   return await commonAPI("GET", `${serverURL}/view-event/${id}`, "");
 };
 
-// BookEvent
+// Book an event
+export const bookAnEventAPI = async (id,reqBody,reqHeader) => {
+  return await commonAPI("PUT", `${serverURL}/book-event/${id}`,reqBody,reqHeader);
+};
+
+// get all booked events
+export const getAllBookedEventsAPI = async (reqHeader) => {
+  return await commonAPI("GET", `${serverURL}/booked-events`,"",reqHeader);
+};
+
+export const makePaymentAPI = async (id, reqBody, reqHeader) => {
+  return await commonAPI(
+    "PUT",
+    `${serverURL}/make-payment/${id}`,
+    reqBody,
+    reqHeader
+  );
+};
+
 
 
 // -----------------users event managing section APIs-------------------------------
@@ -80,10 +98,8 @@ export const deleteAEventAPI = async (id) => {
 };
 
 
-// Book an event
-export const bookAnEventAPI = async (id,reqBody,reqHeader) => {
-  return await commonAPI("PUT", `${serverURL}/book-event/${id}`,reqBody,reqHeader);
-};
+
+
 
 
 // ----------------------------------------ADMIN------------------------------------------------------

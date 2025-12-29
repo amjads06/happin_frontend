@@ -9,10 +9,12 @@ import {
 import Header from "../../common/components/Header";
 import Footer from "../../common/components/Footer";
 import { useParams, useNavigate } from "react-router-dom";
-import { bookAnEventAPI, getAEventAPI } from "../../services/allAPI";
+import { bookAnEventAPI, getAEventAPI, makePaymentAPI } from "../../services/allAPI";
 import serverURL from "../../services/serverURL";
 import noimg from "../../assets/photos/Gemini_Generated_Image_v6b8a2v6b8a2v6b8.png";
 import { toast } from "react-toastify";
+import { loadStripe } from '@stripe/stripe-js'
+
 
 function Booking() {
   const { id } = useParams();
@@ -38,37 +40,98 @@ function Booking() {
       ? eventData.price * bookingData.tickets
       : 0;
 
+  // const handleBooking = async () => {
+  //   const { name, email, phone, tickets } = bookingData
+  //   const reqBody = { name, email, phone, tickets, totalAmount: totalPrice }
+  //   // console.log(reqBody);
+  //   const reqHeader = {
+  //     "Authorization": `Bearer ${token}`
+  //   }
+
+  //   if (eventData.price == "") {
+  //     try {
+  //       const result = await bookAnEventAPI(id, reqBody, reqHeader)
+  //       console.log(result);
+  //       if (result.status == 200) {
+  //         const bookingId = result.data.bookingId
+  //         navigate(`/booking-success/${id}`, {
+  //           state: {
+  //             bookingId,
+  //             eventData,
+  //             bookingData,
+  //             totalPrice,
+  //           },
+  //         });
+
+  //       } else {
+  //         toast.error("Something went wrong")
+  //       }
+  //     } catch (err) {
+  //       console.log(err);
+
+  //     }
+  //   }
+
+  // };
+
   const handleBooking = async () => {
-    navigate("/booking-success", {
-      state: {
-        eventData,
-        bookingData,
-        totalPrice,
-      },
-    });
-    const { name, email, phone, tickets } = bookingData
-    const reqBody = { name, email, phone, tickets, totalAmount: totalPrice }
-    // console.log(reqBody);
+    const { name, email, phone, tickets } = bookingData;
+
+    if (!name || !email || !phone) {
+      toast.error("Please fill all details");
+      return;
+    }
+
+    const reqBody = {
+      name,
+      email,
+      phone,
+      tickets,
+      totalAmount: totalPrice,
+    };
+
     const reqHeader = {
-      "Authorization": `Bearer ${token}`
+      Authorization: `Bearer ${token}`,
+    };
+
+    try {
+      // 🟢 FREE EVENT
+      if (eventData.price === "" || Number(eventData.price) === 0) {
+        const result = await bookAnEventAPI(id, reqBody, reqHeader);
+
+        if (result.status === 200) {
+          const bookingId = result.data.bookingId;
+
+          navigate(`/booking-success/${id}`, {
+            state: {
+              bookingId,
+              eventData,
+              bookingData,
+              totalPrice: 0,
+            },
+          });
+        } else {
+          toast.error("Booking failed");
+        }
+      }
+
+      // PAID EVENT
+      else {
+        const result = await makePaymentAPI(id, reqBody, reqHeader);
+
+        const checkoutSessionUrl = result.data.checkoutSessionUrl;
+
+        if (checkoutSessionUrl) {
+          window.location.href = checkoutSessionUrl;
+          
+        } else {
+          toast.error("Unable to initiate payment");
+        }
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Something went wrong");
     }
-
-    const result = await bookAnEventAPI(id, reqBody, reqHeader)
-    console.log(result);
-    
-    if (result.status == 200) {
-      navigate("/booking-success", {
-        state: {
-          eventData,
-          bookingData,
-          totalPrice,
-        },
-      });
-
-    }else{
-      toast.error("Something went wrong")
-    }
-
   };
 
   useEffect(() => {

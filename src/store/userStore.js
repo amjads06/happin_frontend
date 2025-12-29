@@ -6,3 +6,13 @@ export const useUserStore = create((set) => ({
   updateUser: (newUser) => set({ userDetails: newUser }),
 
 }));
+
+export const useBookingDetails = create((set) => ({
+  bookingDetails: null,
+
+  setBookingDetails: (details) =>
+    set({ bookingDetails: details }),
+
+  clearBookingDetails: () =>
+    set({ bookingDetails: null }),
+}));

@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@gsap/react": "^2.1.2",
+    "@stripe/stripe-js": "^8.6.0",
     "@studio-freight/lenis": "^1.0.42",
     "@tailwindcss/vite": "^4.1.17",
     "axios": "^1.13.2",

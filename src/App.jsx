@@ -23,6 +23,8 @@ import { ToastContainer } from 'react-toastify'
 import ShowDetails from './user/pages/ListYourShow/components/ShowDetails'
 import Booking from './user/pages/Booking'
 import BookingSuccess from './user/pages/BookingSuccess'
+import PaymentSussecc from './user/pages/PaymentSussecc'
+import PaymentError from './user/pages/PaymentError'
 
 function App() {
 
@@ -53,6 +55,9 @@ function App() {
         <Route path='/view-event/:id' element={<EventView />} />
         <Route path='/book-event/:id' element={<Booking />} />
         <Route path="/booking-success/:bookingId" element={<BookingSuccess/>} />
+        <Route path="/payment-success" element={<PaymentSussecc/>} />
+        <Route path="/payment-error" element={<PaymentError/>} />
+
 
         {/* List your Show by users */}
         <Route path='/your-shows/add-shows' element={<AddShow />} />

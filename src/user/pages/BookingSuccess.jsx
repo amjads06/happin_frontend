@@ -18,7 +18,8 @@ function BookingSuccess() {
     return null;
   }
 
-  const { eventData, bookingData, totalPrice } = state;
+  const { bookingId, eventData, bookingData, totalPrice } = state;
+
 
   // ⏳ Show ticket AFTER animation
   useEffect(() => {
@@ -26,30 +27,91 @@ function BookingSuccess() {
       setShowTicket(true);
     }, 3000);
     return () => clearTimeout(timer);
+
   }, []);
 
   // 📥 DOWNLOAD TICKET (RGB SAFE)
-  const downloadTicket = async () => {
-    try {
-      const pdfTicket = document.getElementById("pdf-ticket");
+  const downloadTicket = (b) => {
+    const pdf = new jsPDF("p", "mm", "a4");
 
-      const canvas = await html2canvas(pdfTicket, {
-        scale: 2,
-        backgroundColor: "#ffffff",
-      });
+    const pageWidth = pdf.internal.pageSize.getWidth();
 
-      const imgData = canvas.toDataURL("image/png");
+    // 🎨 Colors
+    const purple = [109, 40, 217];
+    const lightBg = [245, 243, 255];
+    const dark = [35, 35, 35];
 
-      const pdf = new jsPDF("p", "mm", "a4");
-      const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+    // 🎟 Main Ticket Container
+    pdf.setFillColor(...lightBg);
+    pdf.roundedRect(15, 40, pageWidth - 30, 120, 10, 10, "F");
 
-      pdf.addImage(imgData, "PNG", 0, 10, pdfWidth, pdfHeight);
-      pdf.save("Event-Ticket.pdf");
-    } catch (error) {
-      console.error(error);
-      alert("Unable to download ticket");
+    // 🔥 Left Brand Strip
+    pdf.setFillColor(...purple);
+    pdf.roundedRect(15, 40, 15, 120, 10, 0, "F");
+
+    // ✂️ Perforated Tear Line
+    pdf.setDrawColor(170);
+    for (let y = 45; y < 155; y += 6) {
+      pdf.line(pageWidth - 55, y, pageWidth - 50, y);
     }
+
+    // 🎫 Right Ticket Stub
+    pdf.setFillColor(230, 230, 250);
+    pdf.roundedRect(pageWidth - 50, 40, 35, 120, 0, 10, "F");
+
+    // 🏷 Header
+    pdf.setFontSize(16);
+    pdf.setTextColor(...purple);
+    pdf.text("EVENT TICKET", 40, 60);
+
+    // 🎤 Event Title
+    pdf.setFontSize(24);
+    pdf.setTextColor(...dark);
+    pdf.text(eventData.title, 40, 75, {
+      maxWidth: pageWidth - 100,
+    });
+
+    // 📅 Event Info
+    pdf.setFontSize(12);
+    pdf.setTextColor(...dark);
+    pdf.text(`Date : ${eventData.date}`, 40, 92);
+    pdf.text(`Time : ${eventData.time}`, 40, 100);
+    pdf.text(
+      `Venue: ${eventData.venueDetails}, ${eventData.location}`,
+      40,
+      110,
+      { maxWidth: pageWidth - 100 }
+    );
+
+    // 🎟 Booking Info
+    pdf.setFontSize(11);
+    pdf.text(`Tickets : ${bookingData.tickets}`, 40, 126);
+    pdf.text(`Amount  : ₹${totalPrice}`, 40, 134);
+
+    // 🆔 Booking ID
+    pdf.setFontSize(9);
+    pdf.setTextColor(90);
+    pdf.text(`Booking ID: ${bookingId}`, 40, 146, {
+      maxWidth: pageWidth - 100,
+    });
+
+    // 🎫 Stub Content
+    pdf.setFontSize(10);
+    pdf.setTextColor(...dark);
+    pdf.text("ADMIT", pageWidth - 32, 65, { align: "center" });
+
+    pdf.setFontSize(16);
+    pdf.setTextColor(...purple);
+    pdf.text(`x${bookingData.tickets}`, pageWidth - 32, 82, { align: "center" });
+
+    pdf.setFontSize(9);
+    pdf.setTextColor(80);
+    pdf.text("HAPPIN", pageWidth - 32, 150, { align: "center" });
+
+    // 🏁 Footer
+    pdf.setFontSize(9);
+    pdf.setTextColor(120);
+    pdf.save("Happin-Ticket.pdf");
   };
 
   return (
@@ -63,13 +125,14 @@ function BookingSuccess() {
             <BookingSuccessfullAnimation />
           ) : (
             <>
-              {/* 🎟 VISIBLE TICKET (TAILWIND OK) */}
-              <div className="bg-white border-2 border-dashed rounded-xl shadow p-6">
+              {/* 🎟 VISIBLE TICKET */}
+              <div className="bg-white border-2 border-dashed rounded-xl mt-10 shadow p-6">
                 <h2 className="text-2xl font-bold text-center mb-4">
                   🎟 {eventData.title}
                 </h2>
 
                 <div className="space-y-2 text-sm text-gray-700">
+                  <p><strong>Booking ID:</strong> {bookingId}</p>
                   <p><strong>Name:</strong> {bookingData.name}</p>
                   <p><strong>Email:</strong> {bookingData.email}</p>
                   <p><strong>Phone:</strong> {bookingData.phone}</p>
@@ -97,42 +160,6 @@ function BookingSuccess() {
           )}
         </div>
       </div>
-
-      {/* ❗ HIDDEN RGB-ONLY PDF TICKET */}
-      {showTicket && (
-        <div
-          id="pdf-ticket"
-          style={{
-            position: "fixed",
-            left: "-9999px",
-            top: 0,
-            width: "400px",
-            background: "#ffffff",
-            color: "#000000",
-            border: "2px dashed #000",
-            padding: "16px",
-            fontFamily: "Arial, sans-serif",
-          }}
-        >
-          <h2 style={{ textAlign: "center", marginBottom: "12px" }}>
-            🎟 {eventData.title}
-          </h2>
-
-          <p><b>Name:</b> {bookingData.name}</p>
-          <p><b>Email:</b> {bookingData.email}</p>
-          <p><b>Phone:</b> {bookingData.phone}</p>
-          <p><b>Date:</b> {eventData.date}</p>
-          <p><b>Time:</b> {eventData.time}</p>
-          <p><b>Venue:</b> {eventData.venueDetails}</p>
-          <p><b>Tickets:</b> {bookingData.tickets}</p>
-
-          {eventData.price !== "" && (
-            <p style={{ fontWeight: "bold", marginTop: "8px" }}>
-              Amount Paid: ₹{totalPrice}
-            </p>
-          )}
-        </div>
-      )}
 
       <Footer />
     </>
