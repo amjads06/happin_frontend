@@ -1,6 +1,6 @@
 import { GrMenu } from "react-icons/gr";
 import { TbHome } from "react-icons/tb";
-import { Link, Links } from "react-router-dom";
+import { Link, Links, useNavigate } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
@@ -14,6 +14,16 @@ export default function Header2({ active }) {
     const [modal, setModal] = useState(false);
     const [token, setToken] = useState("")
     // console.log(active);
+    const navigate = useNavigate()
+
+
+    const handleLogout = () => {
+        sessionStorage.setItem("token", "")
+        sessionStorage.setItem("existingUser", "")
+        navigate("/")
+        window.location.reload();
+
+    }
 
 
     // Main GSAP animation
@@ -107,19 +117,19 @@ export default function Header2({ active }) {
                         <button className="p-5 text-3xl" onClick={() => setModal(false)}>
                             <AiOutlineClose />
                         </button>
-                        <div ref={menuItemsRef} className="p-10 text-2xl font-bold space-y-6">
+                         <div ref={menuItemsRef} className="p-10 text-2xl font-bold space-y-6">
                             <div className="flex flex-col cursor-pointer text-purple-900 justify-center items-center md:gap-0 gap-10">
-                                {!token&&<h1 className=" hover:text-fuchsia-700 md:mt-5">Login</h1>}
+                                {!token && <Link to={"/login"}><h1 className=" hover:text-fuchsia-700 md:mt-5">Login</h1></Link>}
                                 <div className="h-px w-75 bg-gray-200 md:mt-3"></div>
-                                <Link to={"/profile "}><h1 className=" hover:text-fuchsia-700 md:mt-5">Profile</h1></Link>
+                               {token&&<><Link to={"/profile "}><h1 className=" hover:text-fuchsia-700 md:mt-5">Profile</h1></Link>
+                                <div className="h-px w-75 bg-gray-200 md:mt-3"></div></> }
+                             <Link to={"/contact"}> <h1 className=" hover:text-fuchsia-700 md:mt-5">Contact Us</h1></Link>
                                 <div className="h-px w-75 bg-gray-200 md:mt-3"></div>
-                                <Link to={"/contact"}> <h1 className=" hover:text-fuchsia-700 md:mt-5">Contact Us</h1></Link>
-                                <div className="h-px w-75 bg-gray-200 md:mt-3"></div>
-                                <Link to={"/list-your-show"}> <h1 className=" hover:text-fuchsia-700 md:mt-5">ListYourShow</h1></Link>
-                                <div className="h-px w-75 bg-gray-200 md:mt-3"></div>
-                                <Link to={"/my-bookings"}> <h1 className=" hover:text-fuchsia-700 md:mt-5">Your Bookings</h1></Link>
-                                <div className="h-px w-75 bg-gray-200 md:mt-3"></div>
-                                <div className="flex p-2 md:absolute md:bottom-10 justify-center hover:text-fuchsia-700"><LuLogOut className="mt-1.5" /><h1>Logout</h1></div>
+                               {token&&<><Link to={"/list-your-show"}> <h1 className=" hover:text-fuchsia-700 md:mt-5">ListYourShow</h1></Link>
+                                <div className="h-px w-75 bg-gray-200 md:mt-3"></div></> }
+                             {token&&<><Link to={"/my-bookings"}> <h1 className=" hover:text-fuchsia-700 md:mt-5">Your Bookings</h1></Link>
+                                <div className="h-px w-75 bg-gray-200 md:mt-3"></div></> }
+                                {token && <div onClick={handleLogout} className="flex p-2 md:absolute md:bottom-10 justify-center hover:text-fuchsia-700"><LuLogOut className="mt-1.5" /><h1>Logout</h1></div>}
                             </div>
 
                         </div>

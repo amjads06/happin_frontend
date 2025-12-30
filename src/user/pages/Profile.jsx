@@ -93,7 +93,7 @@ export default function Profile() {
                 </div>
               :
               <img
-                src={preview ? preview : `${serverURL}/imageUploads/${existingProfile}`} className="w-full h-full object-cover" />
+                src={preview ? preview :  existingProfile.startsWith("https") ? existingProfile:`${serverURL}/imageUploads/${existingProfile}`} className="w-full h-full object-cover" />
             }
           </div>
 

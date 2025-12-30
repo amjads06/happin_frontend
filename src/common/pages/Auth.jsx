@@ -4,13 +4,16 @@ import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import stage from "../../assets/photos/stage.png"
 import { toast } from "react-toastify";
-import { loginAPI, registerAPI } from "../../services/allAPI";
+import { googleLoginAPI, loginAPI, registerAPI } from "../../services/allAPI";
+import { jwtDecode } from "jwt-decode";
+import { GoogleLogin } from '@react-oauth/google';
 
 function Auth({ register }) {
     const [passwordVisible, setPasswordVisible] = useState(false);
     const [userDetails, setUserDetails] = useState({ username: "", email: "", password: "" })
     const navigate = useNavigate()
-    
+
+
     const handleLogin = async () => {
         const { email, password } = userDetails
         if (!email || !password) {
@@ -21,7 +24,7 @@ function Auth({ register }) {
                 console.log(result);
                 if (result.status == 200) {
                     sessionStorage.setItem("existingUser", JSON.stringify(result.data.existingUser))
-                    sessionStorage.setItem("token",result.data.token)
+                    sessionStorage.setItem("token", result.data.token)
                     navigate("/")
                     toast.success("Log in successfull")
                     setUserDetails({
@@ -59,6 +62,37 @@ function Auth({ register }) {
         }
     }
 
+    const handleGoogleLogin = async (credentialResponse) => {
+        console.log(credentialResponse.credential);
+        const googleData = jwtDecode(credentialResponse.credential)
+        console.log(googleData);
+        try {
+            const result = await googleLoginAPI({ username: googleData.name, password: "googlepassword", email: googleData.email, profile: googleData.picture })
+            console.log(result);
+            if (result.status == 200) {
+                sessionStorage.setItem("existingUser", JSON.stringify(result.data.existingUser))
+                sessionStorage.setItem("token", result.data.token)
+                toast.success("Login successfull")
+                setUserDetails({
+                    username: "",
+                    email: "",
+                    password: ""
+                })
+                if (result.data.existingUser.role == "user") {
+                    navigate("/")
+                } else {
+                    navigate("/admin-home")
+                }
+            } else {
+                toast.error("Something went wrong")
+            }
+
+        } catch (error) {
+            console.log(error);
+        }
+
+    }
+
     const handleRegister = async () => {
         const { username, email, password } = userDetails
         if (!username || !email || !password) {
@@ -91,7 +125,7 @@ function Auth({ register }) {
             }
         }
     }
-    
+
     return (
 
         <div className="min-h-screen relative flex items-center justify-center overflow-hidden" style={{ backgroundImage: `url(${stage})`, backgroundSize: "cover", backgroundPosition: "center", backgroundRepeat: "no-repeat", filter: "hue-rotate(18deg) contrast(103%) saturate(100%) brightness(96%)" }}>
@@ -139,15 +173,29 @@ function Auth({ register }) {
                             {passwordVisible ? <FaRegEye /> : <FaRegEyeSlash />}
                         </span>
                     </div>
+                    {!register &&
+                        <div className='w-full flex mt-5 justify-center-safe bg-white p-1  shadow-2xl rounded items-center'>
+                            <GoogleLogin
+                                onSuccess={credentialResponse => {
+                                    console.log(credentialResponse);
+                                    handleGoogleLogin(credentialResponse)
+                                }}
+                                onError={() => {
+                                    console.log('Login Failed');
+                                }}
+                            
+                            />
+                        </div>}
                 </div>
 
-
-                {register && <button onClick={handleRegister} className="w-full py-3 mt-4 rounded-lg bg-purple-600 hover:bg-purple-700 transition text-white font-medium shadow-[0_0_15px_rgba(139,92,246,0.5)] mb-4">
+                <div className="mt-5">
+                {register && <button onClick={handleRegister} className="w-full py-3 rounded-lg bg-purple-600 hover:bg-purple-700 transition text-white font-medium shadow-[0_0_15px_rgba(139,92,246,0.5)] mb-4">
                     Register
                 </button>}
-                {!register && <button onClick={handleLogin} className="w-full py-3 mt-4 rounded-lg bg-purple-600 hover:bg-purple-700 transition text-white font-medium shadow-[0_0_15px_rgba(139,92,246,0.5)] mb-4">
+                {!register && <button onClick={handleLogin} className="w-full py-3 rounded-lg bg-purple-600 hover:bg-purple-700 transition text-white font-medium shadow-[0_0_15px_rgba(139,92,246,0.5)] mb-4">
                     Login
                 </button>}
+                </div>
 
                 <p className="text-gray-400 text-sm">
                     {register ? (

@@ -123,8 +123,9 @@ export default function Header({ searchBar }) {
                         :
                         <Link to={"/profile"}>
                             <div className="flex justify-center items-center ">
-                                <img style={{ width: "65px", height: "65px" }} src={profile == "" ? "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSnFRPx77U9mERU_T1zyHcz9BOxbDQrL4Dvtg&s" : `${serverURL}/imageUploads/${profile}`} alt="profile-img" className="rounded-[50%] md:ml-[-13px] object-cover" />
+                                <img style={{ width: "65px", height: "65px" }} src={profile == "" ? "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSnFRPx77U9mERU_T1zyHcz9BOxbDQrL4Dvtg&s" : profile.startsWith("https") ? profile:`${serverURL}/imageUploads/${profile}`} alt="profile-img" className="rounded-[50%] md:ml-[-13px] object-cover" />
                                 <h1 className="hidden md:ml-2 md:block text-lg font-semi-bold hover:text-fuchsia-700 cursor-pointer ">{userName}</h1>
+                             
                             </div>
                         </Link>
                     }
