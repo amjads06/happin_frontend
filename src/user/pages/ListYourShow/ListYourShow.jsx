@@ -11,7 +11,7 @@ export default function ListYourShow() {
 
       {/* HERO SECTION */}
       <section className="px-6 md:px-20 md:pt-50 py-24 text-center bg-linear-to-b from-[#561a61] to-transparent">
-        <h1 className="text-4xl md:text-6xl font-bold mb-4 bg-linear-to-r from-purple-400 to-purple-600 bg-clip-text text-transparent">
+        <h1 className="text-4xl md:text-6xl font-bold mb-4 text-white bg-clip-text text-transparent">
           List Your Show on Happin
         </h1>
         <p className="text-gray-300 text-lg md:text-xl max-w-2xl mx-auto">

@@ -170,7 +170,7 @@ export default function Header({ searchBar }) {
                 <div className="w-full bg-white text-black flex items-center justify-between px-10 md:py-4 py-2 shadow-xl md:ml-18">
                     <nav className="flex p-2 justify-center items-center gap-5 -ml-3 ">
                         <ul className="flex gap-10 text-lg font-bold">
-                            <li className="hover:text-fuchsia-700 cursor-pointer flex items-center justify-center"><Link to={"/"} ><TbHome />Home</Link> </li>
+                            <li className="hover:text-fuchsia-700 cursor-pointer flex items-center justify-center"><Link to={"/"} >Home</Link> </li>
                             <li className="hover:text-fuchsia-700 cursor-pointer"><Link to={"/events"}>Events</Link> </li>
                             <li className="hover:text-fuchsia-700 cursor-pointer"><Link to={"/sports"}>Sports</Link></li>
                             <li className="hover:text-fuchsia-700 cursor-pointer"><Link to={"/contact"}>Contact</Link></li>

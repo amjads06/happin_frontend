@@ -12,7 +12,9 @@ import talk from '../../assets/photos/talkShows.avif'
 import art from '../../assets/photos/art.webp'
 import img1 from '../../assets/photos/hero-img1.jpeg'
 import img2 from '../../assets/photos/hero-img2.webp'
+import playerImg from '../../assets/photos/archivelp-cropped-for-body-removebg-preview.png'
 import img3 from '../../assets/photos/hero-img3.webp'
+import "./LandingPage.css";
 import { Link } from 'react-router-dom';
 
 
@@ -46,35 +48,76 @@ function LandingPage() {
         }
     ]
 
-    const boxRef = useRef(null);
-    const imageRef = useRef(null);
-    const sec3 = useRef(null)
+    // const boxRef = useRef(null);
+    // const imageRef = useRef(null);
+    // const sec3 = useRef(null)
+    const recordRef = useRef(null);   // rotating disc
+    const sec3 = useRef(null);
 
-    useLayoutEffect(() => {
-        // For Smoothier Scrolling
+  
+
+  useLayoutEffect(() => {
+
+        /* ✅ LENIS SMOOTH SCROLL */
         const lenis = new Lenis({
             smooth: true,
             lerp: 0.06,
             wheelMultiplier: 1.2,
         });
+
+        lenis.on("scroll", ScrollTrigger.update);
+
         function raf(time) {
             lenis.raf(time);
-            ScrollTrigger.update();
             requestAnimationFrame(raf);
         }
         requestAnimationFrame(raf);
 
-        // GSAP Animations
+                    /* ⭐ CD Image Cycle */
+            const cdImages = [img1, img2, img3];
+            let index = 0;
+
+            const cycleImages = () => {
+
+                gsap.to(recordRef.current, {
+                    opacity: 0,
+                    duration: 0.6,
+                    ease: "power2.out",
+                    onComplete: () => {
+
+                        index = (index + 1) % cdImages.length;
+                        recordRef.current.src = cdImages[index];
+
+                        gsap.to(recordRef.current, {
+                            opacity: 1,
+                            duration: 0.1,
+                            ease: "power1.out"
+                        });
+                    }
+                });
+
+            };
+
+            const delayed = gsap.delayedCall(6, function repeat() {
+                cycleImages();
+                delayed.restart(true);
+            });
+
+
+        /* ✅ GSAP CONTEXT */
         let ctx = gsap.context(() => {
-            gsap.to(imageRef.current, {
-                y: -560,
+
+            /* ⭐ Scroll-Driven Disc Rotation */
+            gsap.to(recordRef.current, {
+                rotation: 900,
                 ease: "none",
                 scrollTrigger: {
-                    trigger: boxRef.current,
-                    start: "top bottom",
+                    trigger: ".hero-section",
+                    start: "top top",
                     end: "bottom top",
-                    scrub: true,
-                },
+                    scrub: 1.4,
+                    invalidateOnRefresh: true
+                }
             });
 
             gsap.from(".sec3_text", {
@@ -106,14 +149,15 @@ function LandingPage() {
             ctx.revert();
             lenis.destroy();
         }
-    }, []);
+
+        })
 
     return (
         <>
             <Header />
             {/* Section1 */}
             <section className='min-h-screen bg-[#1A151F]'>
-                <div className="md:px-20 px-6 md:pt-45 pt-25 flex flex-col md:flex-row justify-between items-center text-white">
+                <div className="section1 md:px-20 px-6 md:pt-45 pt-25 flex flex-col md:flex-row justify-between items-center text-white">
                     {/* Left text */}
                     <div className="max-w-xl">
                         <h2 className="text-4xl md:text-5xl font-bold leading-snug">
@@ -124,33 +168,23 @@ function LandingPage() {
                     </div>
 
                     {/* RIGHT SIDE */}
-                    <div className="mt-30 md:mt-0 md:top-5 md:right-20 relative md:w-90 md:h-85 w-60 h-64">
-                        <div ref={boxRef} className="overflow-hidden rounded-3xl w-full h-full bg-[#140d1f94] shadow-[0_0_400px_rgba(255,0,255,0.3)]">
-                            <div ref={imageRef} className='relative md:mx-10 flex-col gap-2'>
-                                <img
+                    <div className="player-scene">
 
-                                    src={img1}
-                                    className=" w-100 h-100 object-cover object-center opacity-[0.88]"
-                                />
-                                <img
+                        {/* Player Base */}
+                        <img src={playerImg} className="turntable-base" />
 
-                                    src={img2}
-                                    className=" w-100 h-100 object-cover opacity-[0.88]"
-                                />
-                                <img
+                        {/* Rotating Disc */}
+                        <img
+                            ref={recordRef}
+                            src={img1}
+                            className="turntable-disc"
+                        />
 
-                                    src={img3}
-                                    className=" w-100 h-100 object-cover opacity-[0.88]"
-                                />
-
-                            </div>
-
-                        </div>
                     </div>
                 </div>
 
                 {/* EXPLORE Text */}
-                <h1 className="relative md:-bottom-28 -bottom-38 md:pb-23.5 md:px-20 px-2 text-6xl md:text-[200px] font-extrabold text-white z-15">
+                <h1 className="textInBottom relative md:-bottom-28 -bottom-38 md:pb-23.5 md:px-20 px-2 text-6xl md:text-[200px] font-extrabold text-white z-15">
                     <span className="text-fuchsia-600">EXPLORE</span> the
                 </h1>
             </section>

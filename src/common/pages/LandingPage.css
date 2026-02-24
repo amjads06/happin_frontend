@@ -1,0 +1,130 @@
+
+/* ===== DESKTOP / DEFAULT ===== */
+
+.player-scene {
+  position: relative;
+  width: 420px;
+  max-width: 90vw;
+
+  margin: auto;
+  transform: scale(1.05);
+}
+
+.section1{
+    position: relative;
+    left:90px;
+}
+
+.turntable-base {
+  width: 100%;
+  display: block;
+}
+
+.turntable-disc {
+  position: absolute;
+
+  width: 230px;
+  height: 230px;
+
+  top: 149px;
+  left: 200px;
+
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+
+  will-change: transform;
+  pointer-events: none;
+
+  transition: opacity 0.3s linear;
+
+  filter: drop-shadow(0 10px 18px rgba(0, 0, 0, 0.35));
+}
+
+/* ===== TABLET ===== */
+
+@media (max-width: 1024px) {
+
+  .player-scene {
+    width: 340px;
+  }
+
+  .turntable-disc {
+    width: 190px;
+    height: 190px;
+
+    top: 48%;
+    left: 165px;
+  }
+}
+
+/* ===== MOBILE ===== */
+
+@media (max-width: 1171px) {
+
+  .player-scene {
+    width: 280px;
+
+    transform: scale(1);
+    left: 0;
+    top: 0;
+  }
+
+  .turntable-disc {
+    width: 155px;
+    height: 155px;
+
+    top: 48%;
+    left: 135px;
+
+    filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.35));
+  }
+}
+
+
+@media (max-width: 768px) {
+
+  .player-scene {
+    width: 260px;
+
+    transform: scale(1);
+    left: 0;
+    top: 0;
+  }
+
+  .turntable-disc {
+    width: 145px;
+    height: 145px;
+
+    top: 50%;
+    left: 128px;
+
+    filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.35));
+  }
+}
+
+/* ===== SMALL PHONES ===== */
+
+@media (max-width: 480px) {
+
+
+  .player-scene {
+    width: 420px;
+    transform: translatey(120px);
+   
+  }
+
+  .turntable-disc {
+    width: 200px;
+    height: 200px;
+
+    left: 180px;
+    top:48%;
+  }
+
+  .section1{
+    left: 0px;
+  }
+  .textInBottom {
+    top: 258px;
+  }
+}
